@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:test1/main.dart';
 import 'package:test1/screens/favorites.dart';
 import 'package:flutter/material.dart';
 import 'package:test1/screens/profile.dart';

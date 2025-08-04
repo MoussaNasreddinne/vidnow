@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:test1/controllers/nav_controller.dart';
-import 'package:test1/widgets/animated_nav_destination.dart'; 
-import 'package:test1/service_locator.dart'; // Import the locator
+import 'package:test1/widgets/animated_nav_destination.dart';
+import 'package:test1/service_locator.dart';
 
 class BottomNavBar extends StatelessWidget {
   const BottomNavBar({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Retrieve the NavController instance from the get_it locator
     final NavController n = locator<NavController>();
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
 
     return Obx(
       () => AnimatedContainer(
@@ -20,7 +21,9 @@ class BottomNavBar extends StatelessWidget {
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-              color: Colors.black,
+              color: isDarkMode
+                  ? Colors.black
+                  : Colors.grey,
               blurRadius: 10,
               offset: const Offset(0, -5),
             )
@@ -28,11 +31,14 @@ class BottomNavBar extends StatelessWidget {
         ),
         child: NavigationBar(
           height: 70,
-          indicatorColor: const Color.fromARGB(255, 145, 0, 0),
+          indicatorColor: theme.primaryColor,
           elevation: 10,
-          backgroundColor: const Color.fromARGB(0, 58, 35, 121),
+          // Set a semi-transparent background color based on the theme
+          backgroundColor: isDarkMode
+              ? const Color.fromARGB(255, 20, 0, 50)
+              : Colors.white,
           selectedIndex: n.currentIndex.value,
-          shadowColor: const Color.fromARGB(0, 145, 0, 0),
+          shadowColor: Colors.transparent,
           onDestinationSelected: (value) {
             n.changeIndex(value);
           },

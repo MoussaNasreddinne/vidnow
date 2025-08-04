@@ -8,6 +8,7 @@ import 'package:test1/controllers/rec_controller.dart';
 import 'package:test1/services/ad_service.dart';
 import 'package:test1/services/Api_service.dart';
 import 'package:test1/services/favorite_service.dart';
+import 'package:test1/controllers/theme_controller.dart';
 
 GetIt locator = GetIt.instance;
 
@@ -30,7 +31,8 @@ Future<void> setupLocator() async {
   locator.registerLazySingleton(() => AdController());
   locator.registerLazySingleton(() => ButtonController());
   locator.registerLazySingleton(() => FavoritesController());
-  locator.registerSingleton(LivestreamController());
+  locator.registerLazySingleton(() => LivestreamController());
   locator.registerLazySingleton(() => NavController());
   locator.registerLazySingleton(() => RecommendationController());
+  locator.registerLazySingleton(() => ThemeController());
 }

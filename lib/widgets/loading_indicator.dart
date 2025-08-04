@@ -5,6 +5,8 @@ class LoadingIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -17,24 +19,22 @@ class LoadingIndicator extends StatelessWidget {
               width: 50,
               height: 50,
               decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 145, 0, 0),
+                color: theme.primaryColor, // Use theme primary color
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Center(
                 child: CircularProgressIndicator(
-                  color: Colors.white,
+                  color: Colors.white, // Keep inner spinner white for contrast
                   strokeWidth: 3,
                 ),
               ),
             ),
           ),
           const SizedBox(height: 20),
-          const Text(
+          Text(
             'Loading...',
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 16,
-            ),
+            // Use theme text style
+            style: theme.textTheme.bodyMedium?.copyWith(fontSize: 16),
           ),
         ],
       ),

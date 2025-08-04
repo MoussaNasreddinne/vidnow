@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:test1/services/Api_service.dart';
-import 'package:test1/video.dart'; 
+import 'package:test1/models/video.dart'; 
 import 'package:flutter/material.dart';
 
 class LivestreamController extends GetxController {

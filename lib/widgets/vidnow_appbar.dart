@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:test1/controllers/theme_controller.dart';
+import 'package:test1/service_locator.dart';
 
 class VidNowAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
@@ -8,23 +11,15 @@ class VidNowAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeController themeController = locator<ThemeController>();
+
     return AppBar(
       toolbarHeight: preferredSize.height,
-      backgroundColor: const Color.fromARGB(255, 145, 0, 0),
-      title: AnimatedDefaultTextStyle(
-        duration: const Duration(milliseconds: 300),
-        style: const TextStyle(
-          fontSize: 30,
-          fontWeight: FontWeight.bold,
-          shadows: [
-            Shadow(
-              blurRadius: 10,
-              color: Colors.black,
-              offset: Offset(0, 2),
-            )
-          ],
-        ),
-        child: const Text("VidNow"),
+      // Use theme colors and styles
+      backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+      title: Text(
+        "VidNow",
+        style: Theme.of(context).appBarTheme.titleTextStyle,
       ),
       centerTitle: true,
       elevation: 10,
@@ -33,6 +28,22 @@ class VidNowAppBar extends StatelessWidget implements PreferredSizeWidget {
           bottom: Radius.circular(10),
         ),
       ),
+      actions: [
+        Obx(
+          () => IconButton(
+            icon: Icon(
+              themeController.isDarkMode.value
+                  ? Icons.light_mode_outlined
+                  : Icons.dark_mode_outlined,
+            ),
+            // Use the icon theme color from the AppBarTheme
+            color: Theme.of(context).appBarTheme.iconTheme?.color,
+            onPressed: () {
+              themeController.toggleTheme();
+            },
+          ),
+        ),
+      ],
     );
   }
 }

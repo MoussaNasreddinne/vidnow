@@ -17,11 +17,13 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ButtonController buttonController = locator<ButtonController>();
-    final RecommendationController recController = locator<RecommendationController>();
+    final RecommendationController recController =
+        locator<RecommendationController>();
     final VideoApiService apiService = locator<VideoApiService>();
 
     return Obx(() {
-      if (recController.isLoading.value && recController.currentRecommendations.isEmpty) {
+      if (recController.isLoading.value &&
+          recController.currentRecommendations.isEmpty) {
         return const LoadingIndicator();
       }
 
@@ -34,6 +36,7 @@ class Home extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // The category chips are built dynamically
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Padding(
@@ -43,7 +46,8 @@ class Home extends StatelessWidget {
                         final index = recController.categoryNames.indexOf(name);
                         return CategoryChip(
                           name: name,
-                          isSelected: buttonController.selectedIndex.value == index,
+                          isSelected:
+                              buttonController.selectedIndex.value == index,
                           onTap: () {
                             buttonController.selectButton(index);
                             recController.selectedCategoryIndex.value = index;
@@ -53,11 +57,10 @@ class Home extends StatelessWidget {
                     ),
                   ),
                 ),
-                
+
                 const SizedBox(height: 10),
-                if (recController.isLoading.value &&
-                    recController.currentRecommendations.isEmpty &&
-                    recController.categoryNames.isNotEmpty)
+
+                if (recController.isLoading.value)
                   const Expanded(child: Center(child: LoadingIndicator()))
                 else if (recController.currentRecommendations.isEmpty &&
                     !recController.isLoading.value)
@@ -71,10 +74,12 @@ class Home extends StatelessWidget {
                   )
                 else
                   Expanded(
+                    // The list builder now uses the computed property
                     child: ListView.builder(
                       itemCount: recController.currentRecommendations.length,
                       itemBuilder: (context, index) {
-                        final video = recController.currentRecommendations[index];
+                        final video =
+                            recController.currentRecommendations[index];
                         return VideoCard(
                           recommendation: video,
                           onTap: () async {
@@ -89,7 +94,8 @@ class Home extends StatelessWidget {
                                   ),
                                   barrierDismissible: false,
                                 );
-                                finalVideoUrl = await apiService.getStreamUrl(video.id);
+                                finalVideoUrl =
+                                    await apiService.getStreamUrl(video.id);
                                 Get.back();
                               } catch (e) {
                                 Get.back();
@@ -102,7 +108,8 @@ class Home extends StatelessWidget {
                                 return;
                               }
                             }
-                            Get.to(() => VideoPlayerScreen(videoUrl: finalVideoUrl));
+                            Get.to(() =>
+                                VideoPlayerScreen(videoUrl: finalVideoUrl));
                           },
                         );
                       },

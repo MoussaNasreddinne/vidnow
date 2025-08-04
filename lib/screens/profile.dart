@@ -1,53 +1,45 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:test1/widgets/gradient_background.dart';
+import 'package:test1/widgets/vidnow_appbar.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color.fromARGB(255, 0, 0, 0),
-            Color.fromARGB(255, 16, 0, 61),
-          ],
-        ),
-      ),
+    // Get the current theme to make decisions based on it
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+
+    return GradientBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          toolbarHeight: 40,
-          backgroundColor: const Color.fromARGB(255, 145, 0, 0),
-          title: Text(
-            "VidNow",
-            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-          ),
-          centerTitle: true,
-        ),
+        // Use the reusable, theme-aware AppBar
+        appBar: const VidNowAppBar(),
         body: SingleChildScrollView(
           child: Column(
             children: [
               Padding(
-                padding: EdgeInsets.only(top: 35),
+                padding: const EdgeInsets.only(top: 35),
                 child: Center(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 145, 0, 0),
+                      // Use the theme's primary color
+                      color: theme.primaryColor,
                       borderRadius: BorderRadius.circular(100),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black,
+                          // Use a theme-aware shadow color with the updated withAlpha method
+                          color: isDarkMode
+                              ? Colors.black.withAlpha(179) // Opacity ~70%
+                              : Colors.grey.withAlpha(128), // Opacity 50%
                           spreadRadius: 3,
                           blurRadius: 10,
-                          offset: Offset(0, 5),
+                          offset: const Offset(0, 5),
                         )
                       ],
                     ),
-                    padding: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(100),
                       child: Image.asset(
@@ -60,85 +52,72 @@ class ProfilePage extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Text(
                 "User Name",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+                // Use the theme's text style
+                style: theme.textTheme.titleLarge?.copyWith(fontSize: 24),
               ),
-              SizedBox(height: 5),
+              const SizedBox(height: 5),
               Text(
                 "user@example.com",
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontSize: 16,
-                ),
+                // Use the theme's text style
+                style: theme.textTheme.bodyMedium?.copyWith(fontSize: 16),
               ),
-              SizedBox(height: 30),
-              
-              
-              Container(
-                width: MediaQuery.of(context).size.width * 0.85,
-                decoration: BoxDecoration(
+              const SizedBox(height: 30),
+
+              // Replace the hardcoded container with a theme-aware Card
+              Card(
+                margin: EdgeInsets.symmetric(
+                    horizontal: MediaQuery.of(context).size.width * 0.075),
+                // The card's color will be automatically handled by the theme
+                clipBehavior: Clip.antiAlias,
+                shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Color.fromARGB(255, 85, 53, 53),
-                      Color.fromARGB(255, 145, 0, 0),
-                    ],
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black,
-                      spreadRadius: 2,
-                      blurRadius: 10,
-                      offset: Offset(0, 5),
-                    )
-                  ],
                 ),
                 child: Column(
                   children: [
                     _buildProfileOption(
-                      icon: Icons.person,
+                      icon: Icons.person_outline,
                       title: "Edit Profile",
                       onTap: () {},
+                      context: context,
                     ),
                     _buildProfileOption(
-                      icon: Icons.settings,
+                      icon: Icons.settings_outlined,
                       title: "Settings",
                       onTap: () {},
+                      context: context,
                     ),
-                    
                     _buildProfileOption(
-                      icon: Icons.history,
+                      icon: Icons.history_outlined,
                       title: "Watch History",
                       onTap: () {},
+                      context: context,
                     ),
                     _buildProfileOption(
-                      icon: Icons.notifications,
+                      icon: Icons.notifications_outlined,
                       title: "Notifications",
                       onTap: () {},
+                      context: context,
                     ),
                     _buildProfileOption(
-                      icon: Icons.help,
+                      icon: Icons.help_outline,
                       title: "Help & Support",
                       onTap: () {},
+                      context: context,
                     ),
                     _buildProfileOption(
                       icon: Icons.logout,
                       title: "Logout",
                       onTap: () {},
                       isLast: true,
+                      context: context,
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
             ],
           ),
         ),
@@ -146,29 +125,36 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
+  // Helper widget for building list items in the profile
   Widget _buildProfileOption({
     required IconData icon,
     required String title,
     required VoidCallback onTap,
+    required BuildContext context,
     bool isLast = false,
   }) {
+    final theme = Theme.of(context);
+
     return Column(
       children: [
         ListTile(
-          leading: Icon(icon, color: Colors.white),
+          leading: Icon(icon, color: theme.iconTheme.color),
           title: Text(
             title,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-            ),
+            style: theme.textTheme.bodyLarge?.copyWith(fontSize: 18),
           ),
-          trailing: Icon(Icons.arrow_forward_ios, color: Colors.white70, size: 16),
+          trailing: Icon(
+            Icons.arrow_forward_ios,
+            // Use the updated withAlpha method
+            color: theme.iconTheme.color?.withAlpha(153), 
+            size: 16,
+          ),
           onTap: onTap,
         ),
         if (!isLast)
           Divider(
-            color: Colors.black,
+            // Use the theme's divider color
+            color: theme.dividerColor,
             height: 1,
             indent: 20,
             endIndent: 20,

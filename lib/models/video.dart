@@ -17,6 +17,16 @@ class Video {
 
   String? streamUrl;
 
+  factory Video.empty() {
+  return Video(
+    id: '',
+    title: '',
+    thumbnailUrl: '',
+    description: '',
+    isPremium: false,
+  );
+}
+
   Video({
     required this.id,
 
@@ -71,7 +81,7 @@ class Video {
 
       description: json['Description'] ?? 'No description available.',
 
-      isPremium: json['isPremium']?.toLowerCase() == 'true' ?? false,
+      isPremium: json['isPremium']?.toLowerCase() == 'true'?? false ,
 
       streamUrl: directStreamUrl,
 
