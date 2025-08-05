@@ -11,7 +11,7 @@ class ThemeController extends GetxController {
     super.onInit();
     _loadThemeFromPrefs();
   }
-
+  // Gets the current theme mode based on the isDarkMode
   ThemeMode get theme => isDarkMode.value ? ThemeMode.dark : ThemeMode.light;
 
   Future<void> _loadThemeFromPrefs() async {

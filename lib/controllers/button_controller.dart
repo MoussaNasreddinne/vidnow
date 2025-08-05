@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 
+
 class ButtonController extends GetxController {
   var selectedIndex = (0).obs;
 
@@ -7,3 +8,5 @@ class ButtonController extends GetxController {
     selectedIndex.value = index;
   }
 }
+
+//manages the state for the selected category button

@@ -17,13 +17,10 @@ class CategoryChip extends StatelessWidget {
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
 
-    // Define text color for selected/unselected states
-    final Color selectedTextColor = Colors.white; // Always white on primary color
+    final Color selectedTextColor = Colors.white;
     final Color unselectedTextColor = isDarkMode ? Colors.white : Colors.black;
-
-    // Conditionally create the button style
+   // Defines different button styles for selected and unselected states.
     final ButtonStyle buttonStyle = isSelected
-        // STYLE WHEN SELECTED
         ? ElevatedButton.styleFrom(
             backgroundColor: theme.primaryColor,
             foregroundColor: selectedTextColor,
@@ -31,11 +28,8 @@ class CategoryChip extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
             ),
           )
-        // STYLE WHEN NOT SELECTED (uses the default from the theme)
         : theme.elevatedButtonTheme.style!.copyWith(
-            // Explicitly set the foreground color for the unselected state
-            // to ensure it respects the theme correctly.
-            foregroundColor: WidgetStateProperty.all(unselectedTextColor), // <-- CORRECTED
+            foregroundColor: WidgetStateProperty.all(unselectedTextColor),
           );
 
     return Padding(
@@ -52,13 +46,13 @@ class CategoryChip extends StatelessWidget {
                     spreadRadius: 2,
                     blurRadius: 5,
                     offset: const Offset(0, 2),
-                  )
+                  ),
                 ]
               : null,
         ),
         child: ElevatedButton(
           onPressed: onTap,
-          style: buttonStyle, // Apply the corrected conditional style
+          style: buttonStyle,
           child: AnimatedDefaultTextStyle(
             duration: const Duration(milliseconds: 200),
             style: TextStyle(

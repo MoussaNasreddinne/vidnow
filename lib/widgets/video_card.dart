@@ -4,6 +4,7 @@ import 'package:test1/models/video.dart';
 import 'package:test1/services/favorite_service.dart';
 import 'package:test1/service_locator.dart';
 
+// A card widget to display a single video's details
 class VideoCard extends StatelessWidget {
   final Video recommendation;
   final VoidCallback onTap;
@@ -47,7 +48,7 @@ class VideoCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Hero(
+              Hero( // Hero widget for smooth transition animation.
                 tag: 'video-thumbnail-${recommendation.id}',
                 child: ClipRRect(
                   borderRadius:
@@ -115,7 +116,7 @@ class VideoCard extends StatelessWidget {
                             ),
                           ),
                         if (!recommendation.isPremium) const Spacer(),
-                        Obx(() {
+                        Obx(() { // rebuilds the favorite button when its state changes
                           final bool isFav =
                               favoriteService.isFavorite(recommendation.id);
                           return AnimatedSwitcher(

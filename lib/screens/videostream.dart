@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 import 'package:test1/services/ad_service.dart';
-import 'package:test1/service_locator.dart'; // Import the locator
+import 'package:test1/service_locator.dart';
 
 class VideoPlayerScreen extends StatefulWidget {
   final String videoUrl;
@@ -13,11 +13,13 @@ class VideoPlayerScreen extends StatefulWidget {
   State<VideoPlayerScreen> createState() => _VideoPlayerScreenState();
 }
 
-class _VideoPlayerScreenState extends State<VideoPlayerScreen> with SingleTickerProviderStateMixin {
+class _VideoPlayerScreenState extends State<VideoPlayerScreen>
+    with SingleTickerProviderStateMixin {
   VideoPlayerController? _videoPlayerController;
   ChewieController? _chewieController;
   bool _isLoading = true;
-  String _initializationStatus = 'Initializing...';
+
+  String _statusKey = 'videoPlayerInitializing';
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
 
@@ -28,40 +30,54 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> with SingleTicker
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
-    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _fadeController, curve: Curves.easeIn),
-    );
+    _fadeAnimation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _fadeController, curve: Curves.easeIn));
     _initializePlayer();
   }
-
+   // Initializes the video player with the given URL
   Future<void> _initializePlayer() async {
-    _initializationStatus = 'Parsing URL...';
-    debugPrint('VideoPlayerScreen: _initializePlayer called. URL: "${widget.videoUrl}"');
+    setState(() => _statusKey = 'videoPlayerParsingUrl');
+    debugPrint(
+      'VideoPlayerScreen: _initializePlayer called. URL: "${widget.videoUrl}"',
+    );
+
     try {
       String cleanUrl = widget.videoUrl.replaceAll('"', '').trim();
-      _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(cleanUrl));
+      _videoPlayerController = VideoPlayerController.networkUrl(
+        Uri.parse(cleanUrl),
+      );
 
-      _initializationStatus = 'Loading video...';
-      debugPrint('VideoPlayerScreen: Attempting to initialize VideoPlayerController...');
-
+      setState(() => _statusKey = 'videoPlayerLoadingVideo');
+      debugPrint(
+        'VideoPlayerScreen: Attempting to initialize VideoPlayerController...',
+      );
       await _videoPlayerController!.initialize();
-
-      debugPrint('VideoPlayerScreen: VideoPlayerController.initialize() completed.');
+      debugPrint(
+        'VideoPlayerScreen: VideoPlayerController.initialize() completed.',
+      );
 
       if (_videoPlayerController!.value.hasError) {
         final error = _videoPlayerController!.value.errorDescription;
-        debugPrint('VideoPlayerScreen: VideoPlayerController has error: $error');
+        debugPrint(
+          'VideoPlayerScreen: VideoPlayerController has error: $error',
+        );
         throw Exception('Video player error: $error');
       }
 
       if (!_videoPlayerController!.value.isInitialized) {
-        debugPrint('VideoPlayerScreen: VideoPlayerController did not report as initialized after .initialize().');
+        debugPrint(
+          'VideoPlayerScreen: VideoPlayerController did not report as initialized after .initialize().',
+        );
         throw Exception('VideoPlayerController did not initialize properly.');
       }
 
-      _initializationStatus = 'Creating player...';
-      debugPrint('VideoPlayerScreen: VideoPlayerController is initialized (true). Creating ChewieController...');
-      
+      setState(() => _statusKey = 'videoPlayerCreatingPlayer');
+      debugPrint(
+        'VideoPlayerScreen: VideoPlayerController is initialized (true). Creating ChewieController...',
+      );
+      // chewie controller to provide UI controls for the video player
       _chewieController = ChewieController(
         videoPlayerController: _videoPlayerController!,
         autoPlay: true,
@@ -88,7 +104,9 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> with SingleTicker
                 const Icon(Icons.error_outline, color: Colors.white, size: 50),
                 const SizedBox(height: 10),
                 Text(
-                  'Could not play video: $errorMessage',
+                  'couldNotPlayVideo'.trParams({
+                    'errorMessage': errorMessage,
+                  }), 
                   style: const TextStyle(color: Colors.white),
                   textAlign: TextAlign.center,
                 ),
@@ -98,22 +116,27 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> with SingleTicker
         },
       );
 
-      debugPrint('VideoPlayerScreen: ChewieController created. Player should be ready.');
-      
+      debugPrint(
+        'VideoPlayerScreen: ChewieController created. Player should be ready.',
+      );
       _fadeController.forward();
+
       setState(() {
         _isLoading = false;
-        _initializationStatus = 'Ready';
+        _statusKey = 'videoPlayerReady';
       });
     } catch (e) {
       debugPrint("VideoPlayerScreen: Error during _initializePlayer: $e");
       setState(() {
         _isLoading = false;
-        _initializationStatus = 'Error: ${e.toString()}';
+        
+        _statusKey = 'couldNotPlayVideo'.trParams({
+          'errorMessage': e.toString(),
+        });
       });
       Get.snackbar(
-        'Playback Error',
-        'Could not load video. Details: ${e.toString().split(':')[0]}',
+        'playbackError'.tr, 
+        _statusKey, 
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -141,7 +164,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> with SingleTicker
             icon: const Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () {
               Get.back();
-             
+              // Shows an interstitial ad when the user navigates back.
               locator<AdService>().showInterstitialAd();
             },
           ),
@@ -171,7 +194,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> with SingleTicker
                         return Opacity(
                           opacity: _fadeAnimation.value,
                           child: Text(
-                            _initializationStatus,
+                            _statusKey.tr, 
                             style: const TextStyle(
                               color: Colors.white70,
                               fontSize: 14,
@@ -185,7 +208,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> with SingleTicker
                 )
               : FadeTransition(
                   opacity: _fadeAnimation,
-                  child: _chewieController != null &&
+                  child:
+                      _chewieController != null &&
                           _videoPlayerController != null &&
                           _videoPlayerController!.value.isInitialized
                       ? Hero(
@@ -202,10 +226,13 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> with SingleTicker
                             ),
                             const SizedBox(height: 10),
                             Text(
-                              _initializationStatus.contains('Error')
-                                  ? _initializationStatus
-                                  : 'Video playback could not be started.\nDouble-check the video URL or network.',
-                              style: const TextStyle(color: Colors.white, fontSize: 16),
+                              _statusKey.contains('Error')
+                                  ? _statusKey 
+                                  : 'playbackCouldNotBeStarted'.tr, 
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
                               textAlign: TextAlign.center,
                             ),
                           ],

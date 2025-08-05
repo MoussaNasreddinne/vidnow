@@ -22,6 +22,7 @@ class Home extends StatelessWidget {
     final VideoApiService apiService = locator<VideoApiService>();
 
     return Obx(() {
+      // rebuilds the entire screen based on the recommendation controller's state
       if (recController.isLoading.value &&
           recController.currentRecommendations.isEmpty) {
         return const LoadingIndicator();
@@ -36,7 +37,7 @@ class Home extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // The category chips are built dynamically
+                // Horizontal list of category filter chips
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Padding(
@@ -44,8 +45,11 @@ class Home extends StatelessWidget {
                     child: Row(
                       children: recController.categoryNames.map((name) {
                         final index = recController.categoryNames.indexOf(name);
+
+                        final displayName = name == 'All' ? 'all'.tr : name;
+
                         return CategoryChip(
-                          name: name,
+                          name: displayName,
                           isSelected:
                               buttonController.selectedIndex.value == index,
                           onTap: () {
@@ -57,24 +61,21 @@ class Home extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 10),
-
                 if (recController.isLoading.value)
                   const Expanded(child: Center(child: LoadingIndicator()))
                 else if (recController.currentRecommendations.isEmpty &&
                     !recController.isLoading.value)
-                  const Expanded(
+                  Expanded(
                     child: Center(
                       child: Text(
-                        "No videos found for this category.",
+                        'noVideosFound'.tr, // Changed
                         style: TextStyle(color: Colors.white70, fontSize: 16),
                       ),
                     ),
                   )
                 else
                   Expanded(
-                    // The list builder now uses the computed property
                     child: ListView.builder(
                       itemCount: recController.currentRecommendations.length,
                       itemBuilder: (context, index) {
@@ -94,22 +95,27 @@ class Home extends StatelessWidget {
                                   ),
                                   barrierDismissible: false,
                                 );
-                                finalVideoUrl =
-                                    await apiService.getStreamUrl(video.id);
+                                finalVideoUrl = await apiService.getStreamUrl(
+                                  video.id,
+                                );
                                 Get.back();
                               } catch (e) {
                                 Get.back();
                                 Get.snackbar(
-                                  'Error',
-                                  'Failed to get video stream: $e',
+                                  'error'.tr, // Changed
+                                  'failedToGetVideoStream'.trParams(
+                                    // Changed
+                                    {'error': e.toString()},
+                                  ),
                                   snackPosition: SnackPosition.BOTTOM,
                                 );
                                 debugPrint('Error getting stream URL: $e');
                                 return;
                               }
                             }
-                            Get.to(() =>
-                                VideoPlayerScreen(videoUrl: finalVideoUrl));
+                            Get.to(
+                              () => VideoPlayerScreen(videoUrl: finalVideoUrl),
+                            );
                           },
                         );
                       },

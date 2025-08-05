@@ -6,14 +6,13 @@ import 'package:test1/widgets/vidnow_appbar.dart';
 import 'package:test1/widgets/video_card.dart';
 import 'package:test1/screens/videostream.dart';
 import 'package:test1/controllers/favorites_controller.dart';
-import 'package:test1/service_locator.dart'; // Import the locator
+import 'package:test1/service_locator.dart';
 
 class Favorites extends StatelessWidget {
   const Favorites({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Retrieve instances from the locator
     final FavoritesController controller = locator<FavoritesController>();
     final VideoApiService apiService = locator<VideoApiService>();
 
@@ -21,26 +20,24 @@ class Favorites extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: VidNowAppBar(),
-        body: Obx(() {
-          // Only show loading indicator on initial load
+        body: Obx(() { // rebuilds the body based on the state of the favorites list
           if (controller.isLoadingFavorites.value && controller.favoriteVideos.isEmpty) {
             return const Center(child: CircularProgressIndicator(color: Colors.red));
           }
           
-          // Empty state
           if (controller.favoriteVideos.isEmpty) {
-            return const Center(
+            return Center(
               child: Padding(
-                padding: EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(16.0),
                 child: Text(
-                  "No favorites added yet. Click the heart icon on a video to add it!",
-                  style: TextStyle(color: Colors.white70, fontSize: 16),
+                  'noFavoritesAdded'.tr, 
+                  style: const TextStyle(color: Colors.white70, fontSize: 16),
                   textAlign: TextAlign.center,
                 ),
               ),
             );
           }
-
+          // AnimatedList provides animations for item additions and removals
           return AnimatedList(
             key: controller.listKey, 
             padding: const EdgeInsets.all(8.0),
@@ -53,7 +50,7 @@ class Favorites extends StatelessWidget {
                   recommendation: video,
                   onTap: () async {
                     String finalVideoUrl = video.streamUrl ?? '';
-                    if (finalVideoUrl.isEmpty) {
+                    if (finalVideoUrl.isEmpty) { // Fetches the stream URL if it's not already available.
                       try {
                         Get.dialog(
                           const Center(child: CircularProgressIndicator(color: Colors.red)),
@@ -64,8 +61,10 @@ class Favorites extends StatelessWidget {
                       } catch (e) {
                         Get.back();
                         Get.snackbar(
-                          'Error', 
-                          'Failed to get video stream: ${e.toString().split(':')[0]}',
+                          'error'.tr, // Changed
+                          'failedToGetVideoStream'.trParams({ // Changed
+                            'error': e.toString().split(':')[0]
+                          }),
                           snackPosition: SnackPosition.BOTTOM,
                         );
                         return;

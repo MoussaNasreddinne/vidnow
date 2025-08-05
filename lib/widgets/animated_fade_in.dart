@@ -28,3 +28,4 @@ class AnimatedFadeIn extends StatelessWidget {
     );
   }
 }
+// A reusable widget that fades its child in with an animation

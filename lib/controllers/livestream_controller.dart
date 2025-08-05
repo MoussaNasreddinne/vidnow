@@ -14,6 +14,7 @@ class LivestreamController extends GetxController {
     fetchLiveChannels();
   }
 
+  // Fetches the list of live channels from the API service.
   Future<void> fetchLiveChannels() async {
     try {
       isLoading(true);

@@ -12,7 +12,7 @@ class BottomNavBar extends StatelessWidget {
     final NavController n = locator<NavController>();
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
-
+    // rebuilds the widget when the selected index changes.
     return Obx(
       () => AnimatedContainer(
         duration: const Duration(milliseconds: 300),
@@ -21,19 +21,17 @@ class BottomNavBar extends StatelessWidget {
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-              color: isDarkMode
-                  ? Colors.black
-                  : Colors.grey,
+              color: isDarkMode ? Colors.black : Colors.grey,
               blurRadius: 10,
               offset: const Offset(0, -5),
-            )
+            ),
           ],
         ),
         child: NavigationBar(
           height: 70,
           indicatorColor: theme.primaryColor,
           elevation: 10,
-          // Set a semi-transparent background color based on the theme
+
           backgroundColor: isDarkMode
               ? const Color.fromARGB(255, 20, 0, 50)
               : Colors.white,

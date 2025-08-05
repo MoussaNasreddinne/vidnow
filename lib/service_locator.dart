@@ -9,6 +9,8 @@ import 'package:test1/services/ad_service.dart';
 import 'package:test1/services/Api_service.dart';
 import 'package:test1/services/favorite_service.dart';
 import 'package:test1/controllers/theme_controller.dart';
+import 'package:test1/controllers/language_controller.dart';
+
 
 GetIt locator = GetIt.instance;
 
@@ -17,7 +19,7 @@ Future<void> setupLocator() async {
   locator.registerLazySingleton(() => VideoApiService());
   locator.registerLazySingleton(() => AdService());
 
-  // Register FavoriteService as an async singleton because it needs to initialize SharedPreferences
+  // initialized first since it needs shared preferences
   locator.registerSingletonAsync<FavoriteService>(() async {
     final favoriteService = FavoriteService();
     await favoriteService.init(); // Call the new initializer
@@ -27,7 +29,7 @@ Future<void> setupLocator() async {
   // Wait for FavoriteService to be ready before registering controllers that depend on it
   await locator.isReady<FavoriteService>();
 
-  // Controllers (Registered as lazy singletons to maintain state throughout the app)
+  // Controllers 
   locator.registerLazySingleton(() => AdController());
   locator.registerLazySingleton(() => ButtonController());
   locator.registerLazySingleton(() => FavoritesController());
@@ -35,4 +37,6 @@ Future<void> setupLocator() async {
   locator.registerLazySingleton(() => NavController());
   locator.registerLazySingleton(() => RecommendationController());
   locator.registerLazySingleton(() => ThemeController());
+  locator.registerLazySingleton(() => LanguageController());
+  
 }

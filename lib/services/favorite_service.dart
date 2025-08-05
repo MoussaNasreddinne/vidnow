@@ -8,9 +8,10 @@ class FavoriteService {
   late SharedPreferences _prefs;
   final String _favoritesKey = 'favoriteVideos';
 
+  //set of favorite video ids
   final RxSet<String> favoriteVideoIds = <String>{}.obs;
 
-  // New initializer method to be called from the service locator
+  //initializes by loading data from the sharedpreferences
   Future<void> init() async {
     await _initPrefs();
     _loadFavoriteIds();
@@ -20,6 +21,7 @@ class FavoriteService {
     _prefs = await SharedPreferences.getInstance();
   }
 
+  //list of favorite vid ids from storage
   void _loadFavoriteIds() {
     final String? encodedMap = _prefs.getString(_favoritesKey);
     if (encodedMap != null) {
@@ -29,6 +31,7 @@ class FavoriteService {
     }
   }
 
+  //saves the current list of favorites ids to storage
   Future<void> _saveFavoriteIds() async {
     final String encodedMap = json.encode(favoriteVideoIds.toList());
     await _prefs.setString(_favoritesKey, encodedMap);
@@ -39,6 +42,7 @@ class FavoriteService {
     return favoriteVideoIds.contains(videoId);
   }
 
+  // Adds a video to the favorites list and shows a confirmation snackbar.
   Future<void> addFavorite(Video video) async {
     if (!favoriteVideoIds.contains(video.id)) {
       favoriteVideoIds.add(video.id);

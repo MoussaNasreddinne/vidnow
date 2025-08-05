@@ -26,8 +26,8 @@ class GradientBackground extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Color(0xFFE0E0E0), // Light Grey
-                  Color(0xFFBDBDBD), // Mid Grey
+                  Color(0xFFE0E0E0),
+                  Color(0xFFBDBDBD), 
                 ],
               ),
       ),
@@ -38,3 +38,4 @@ class GradientBackground extends StatelessWidget {
     );
   }
 }
+// A reusable widget that provides a gradient background.

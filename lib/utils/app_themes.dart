@@ -4,7 +4,7 @@ class AppThemes {
   static final ThemeData darkTheme = ThemeData(
     primaryColor: const Color.fromARGB(255, 145, 0, 0),
     brightness: Brightness.dark,
-    scaffoldBackgroundColor: Colors.transparent, // To keep gradients visible
+    scaffoldBackgroundColor: Colors.transparent, 
     appBarTheme: const AppBarTheme(
       backgroundColor: Color.fromARGB(255, 145, 0, 0),
       elevation: 10,

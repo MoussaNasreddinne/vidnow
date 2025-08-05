@@ -12,14 +12,39 @@ class VidNowAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeController themeController = locator<ThemeController>();
-
     return AppBar(
+      leading: PopupMenuButton<Locale>( // Language selection popup menu
+        icon: Icon(
+          Icons.language,
+          color: Theme.of(context).appBarTheme.iconTheme?.color,
+        ),
+        onSelected: (locale) {
+          Get.updateLocale(locale);
+        },
+        itemBuilder: (BuildContext context) => <PopupMenuEntry<Locale>>[
+          PopupMenuItem<Locale>(
+            value: const Locale('en'),
+            child: Text('languageEnglish'.tr),
+          ),
+          PopupMenuItem<Locale>(
+            value: const Locale('ar'),
+            child: Text('languageArabic'.tr),
+          ),
+          
+          PopupMenuItem<Locale>(
+            value: const Locale('fr'),
+            child: Text('French'.tr),
+          ),
+        ],
+      ),
       toolbarHeight: preferredSize.height,
-      // Use theme colors and styles
       backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-      title: Text(
-        "VidNow",
-        style: Theme.of(context).appBarTheme.titleTextStyle,
+      title: FittedBox(
+        fit: BoxFit.contain,
+        child: Text(
+          'appName'.tr,
+          style: Theme.of(context).appBarTheme.titleTextStyle,
+        ),
       ),
       centerTitle: true,
       elevation: 10,
@@ -29,14 +54,13 @@ class VidNowAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
       actions: [
-        Obx(
+        Obx( // Theme toggle button
           () => IconButton(
             icon: Icon(
               themeController.isDarkMode.value
                   ? Icons.light_mode_outlined
                   : Icons.dark_mode_outlined,
             ),
-            // Use the icon theme color from the AppBarTheme
             color: Theme.of(context).appBarTheme.iconTheme?.color,
             onPressed: () {
               themeController.toggleTheme();

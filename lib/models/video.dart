@@ -17,15 +17,16 @@ class Video {
 
   String? streamUrl;
 
+  // constructor for empty video
   factory Video.empty() {
-  return Video(
-    id: '',
-    title: '',
-    thumbnailUrl: '',
-    description: '',
-    isPremium: false,
-  );
-}
+    return Video(
+      id: '',
+      title: '',
+      thumbnailUrl: '',
+      description: '',
+      isPremium: false,
+    );
+  }
 
   Video({
     required this.id,
@@ -45,6 +46,7 @@ class Video {
     this.categoryName,
   });
 
+  // constructor to create a video instance from a json map
   factory Video.fromJson(Map<String, dynamic> json, {String? category}) {
     Duration? parsedDuration;
 
@@ -81,7 +83,7 @@ class Video {
 
       description: json['Description'] ?? 'No description available.',
 
-      isPremium: json['isPremium']?.toLowerCase() == 'true'?? false ,
+      isPremium: json['isPremium']?.toLowerCase() == 'true' ?? false,
 
       streamUrl: directStreamUrl,
 

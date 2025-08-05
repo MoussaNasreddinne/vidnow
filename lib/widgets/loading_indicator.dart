@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class LoadingIndicator extends StatelessWidget {
   const LoadingIndicator({super.key});
@@ -6,7 +7,6 @@ class LoadingIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -19,12 +19,12 @@ class LoadingIndicator extends StatelessWidget {
               width: 50,
               height: 50,
               decoration: BoxDecoration(
-                color: theme.primaryColor, // Use theme primary color
+                color: theme.primaryColor,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Center(
                 child: CircularProgressIndicator(
-                  color: Colors.white, // Keep inner spinner white for contrast
+                  color: Colors.white,
                   strokeWidth: 3,
                 ),
               ),
@@ -32,8 +32,7 @@ class LoadingIndicator extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           Text(
-            'Loading...',
-            // Use theme text style
+            'loading'.tr, 
             style: theme.textTheme.bodyMedium?.copyWith(fontSize: 16),
           ),
         ],
@@ -41,3 +40,4 @@ class LoadingIndicator extends StatelessWidget {
     );
   }
 }
+// A reusable custom loading indicator widget.

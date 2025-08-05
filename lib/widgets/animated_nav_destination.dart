@@ -16,19 +16,14 @@ class AnimatedNavDestination extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-    // Define colors for icons based on theme and selection state
-    final Color selectedColor = Colors.white; // Always white on the primary color indicator
-    final Color unselectedColor =
-        isDarkMode ? Colors.white70 : Colors.black54;
+    final Color selectedColor = Colors.white;
+    final Color unselectedColor = isDarkMode ? Colors.white70 : Colors.black54;
 
     return NavigationDestination(
       icon: AnimatedSwitcher(
         duration: const Duration(milliseconds: 200),
         transitionBuilder: (child, animation) {
-          return ScaleTransition(
-            scale: animation,
-            child: child,
-          );
+          return ScaleTransition(scale: animation, child: child);
         },
         child: Icon(
           isSelected ? selectedIcon : icon,
@@ -41,3 +36,4 @@ class AnimatedNavDestination extends StatelessWidget {
     );
   }
 }
+// An animated navigation destination icon for the bottom navigation bar
