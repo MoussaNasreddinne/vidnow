@@ -10,12 +10,18 @@ import 'package:test1/service_locator.dart';
 import 'package:test1/controllers/theme_controller.dart';
 import 'package:test1/utils/app_themes.dart';
 import 'package:test1/services/app_translations.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 void main() async {
   //initializing needed services
   WidgetsFlutterBinding.ensureInitialized();
   await MobileAds.instance.initialize();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   await setupLocator();
+  await locator<AdService>().initialize();
   locator<AdService>().loadInterstitialAd();
   MobileAds.instance.updateRequestConfiguration(
     RequestConfiguration(

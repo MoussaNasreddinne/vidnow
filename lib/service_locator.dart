@@ -10,14 +10,22 @@ import 'package:test1/services/Api_service.dart';
 import 'package:test1/services/favorite_service.dart';
 import 'package:test1/controllers/theme_controller.dart';
 import 'package:test1/controllers/language_controller.dart';
+import 'package:test1/services/auth_service.dart'; 
+import 'package:firebase_auth/firebase_auth.dart'; 
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 GetIt locator = GetIt.instance;
 
 Future<void> setupLocator() async {
+  // Firebase Instances
+  locator.registerLazySingleton(() => FirebaseAuth.instance);
+  locator.registerLazySingleton(() => FirebaseFirestore.instance);
+  
   // Services
   locator.registerLazySingleton(() => VideoApiService());
   locator.registerLazySingleton(() => AdService());
+  locator.registerLazySingleton(() => AuthService()); 
 
   // initialized first since it needs shared preferences
   locator.registerSingletonAsync<FavoriteService>(() async {

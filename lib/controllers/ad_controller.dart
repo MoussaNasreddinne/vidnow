@@ -1,50 +1,55 @@
 import 'dart:io';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 
 class AdController extends GetxController {
   BannerAd? bannerAd;
   var isBannerAdLoaded = false.obs;
-  final String testDeviceId = 'bc50e66a-4872-4970-b7ca-2e9b28b56147'; 
+  final String _testDeviceId = 'bc50e66a-4872-4970-b7ca-2e9b28b56147';
 
   @override
   void onInit() {
     super.onInit();
+    _initializeMobileAds();
+  }
+
+  Future<void> _initializeMobileAds() async {
+    await MobileAds.instance.initialize();
+    await MobileAds.instance.updateRequestConfiguration(
+      RequestConfiguration(testDeviceIds: [_testDeviceId]),
+    );
+    debugPrint('AdController: Initialized with test device $_testDeviceId');
     _loadBannerAd();
   }
 
   void _loadBannerAd() {
-  bannerAd?.dispose();
-  
-  
-  MobileAds.instance.updateRequestConfiguration(
-    RequestConfiguration(
-      testDeviceIds: ['bc50e66a-4872-4970-b7ca-2e9b28b56147'], 
-    ),
-  );
+    isBannerAdLoaded.value = false;
+    bannerAd?.dispose();
 
-  
-  final request = AdRequest();
-
-  bannerAd = BannerAd(
-    adUnitId: Platform.isAndroid
-        ? 'ca-app-pub-3940256099942544/6300978111'
-        : 'ca-app-pub-3940256099942544/2934735716',
-    size: AdSize.banner,
-    request: request, 
-    listener: BannerAdListener(
-      onAdLoaded: (ad) {
-        isBannerAdLoaded.value = true;
-        print('Test banner ad loaded successfully');
-      },
-      onAdFailedToLoad: (ad, error) {
-        ad.dispose();
-        print('Banner ad failed: $error');
-        Future.delayed(Duration(seconds: 5), _loadBannerAd);
-      },
-    ),
-  )..load();
-}
+    bannerAd = BannerAd(
+      adUnitId: Platform.isAndroid
+          ? 'ca-app-pub-3940256099942544/6300978111' // Test ID
+          : 'ca-app-pub-3940256099942544/2934735716', // Test ID
+      request: const AdRequest(),
+      size: AdSize.banner,
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          isBannerAdLoaded.value = true;
+          debugPrint('AdController: Banner ad loaded successfully');
+        },
+        onAdFailedToLoad: (ad, error) {
+          debugPrint('AdController: Banner ad failed to load: $error');
+          ad.dispose();
+          isBannerAdLoaded.value = false;
+          // Retry after delay
+          Future.delayed(const Duration(seconds: 30), _loadBannerAd);
+        },
+        onAdOpened: (ad) => debugPrint('AdController: Banner ad opened'),
+        onAdClosed: (ad) => debugPrint('AdController: Banner ad closed'),
+      ),
+    )..load();
+  }
 
   @override
   void onClose() {

@@ -1,20 +1,20 @@
-
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 
-// Handles loading and showing both interstitial and banner ads.
 class AdService {
-  
   InterstitialAd? _interstitialAd;
   bool _isInterstitialAdLoaded = false;
+  final String _testDeviceId = 'bc50e66a-4872-4970-b7ca-2e9b28b56147';
 
-  
-  BannerAd? bannerAd;
+  Future<void> initialize() async {
+    await MobileAds.instance.updateRequestConfiguration(
+      RequestConfiguration(testDeviceIds: [_testDeviceId]),
+    );
+    debugPrint('AdService: Initialized with test device $_testDeviceId');
+  }
 
-  final ValueNotifier<bool> isBannerAdLoaded = ValueNotifier(false);
-
-  
   void loadInterstitialAd() {
     InterstitialAd.load(
       adUnitId: Platform.isAndroid
@@ -25,15 +25,28 @@ class AdService {
         onAdLoaded: (ad) {
           _interstitialAd = ad;
           _isInterstitialAdLoaded = true;
+          debugPrint('AdService: Interstitial ad loaded');
+          
           ad.fullScreenContentCallback = FullScreenContentCallback(
             onAdDismissedFullScreenContent: (ad) {
+              debugPrint('AdService: Interstitial ad dismissed');
               ad.dispose();
-              loadInterstitialAd();
+              _isInterstitialAdLoaded = false;
+              loadInterstitialAd(); // Load a new ad
+            },
+            onAdFailedToShowFullScreenContent: (ad, error) {
+              debugPrint('AdService: Failed to show interstitial ad: $error');
+              ad.dispose();
+              _isInterstitialAdLoaded = false;
+              loadInterstitialAd(); // Load a new ad
             },
           );
         },
         onAdFailedToLoad: (error) {
-          debugPrint('Failed to load interstitial ad: $error');
+          debugPrint('AdService: Failed to load interstitial ad: $error');
+          _isInterstitialAdLoaded = false;
+          // Retry after delay
+          Future.delayed(const Duration(seconds: 30), loadInterstitialAd);
         },
       ),
     );
@@ -41,45 +54,16 @@ class AdService {
 
   void showInterstitialAd() {
     if (_isInterstitialAdLoaded && _interstitialAd != null) {
-      _interstitialAd!.show();
-      _isInterstitialAdLoaded = false;
+      try {
+        _interstitialAd?.show();
+        debugPrint('AdService: Showing interstitial ad');
+      } catch (e) {
+        debugPrint('AdService: Error showing interstitial ad: $e');
+        loadInterstitialAd(); // Attempt to reload if showing fails
+      }
     } else {
-      debugPrint('Ad not loaded yet');
+      debugPrint('AdService: Interstitial ad not ready, loading new one');
       loadInterstitialAd();
     }
-  }
-
-  
-  // Public method to load a banner ad.
-  void loadBannerAd() {
-    bannerAd?.dispose();
-    isBannerAdLoaded.value = false;
-
-    bannerAd = BannerAd(
-      adUnitId: Platform.isAndroid
-          ? 'ca-app-pub-3940256099942544/6300978111' 
-          : 'ca-app-pub-3940256099942544/2934735716', 
-      size: AdSize.banner,
-      request: const AdRequest(),
-      listener: BannerAdListener(
-        onAdLoaded: (ad) {
-          debugPrint('Banner ad loaded successfully');
-          // Notify listeners that the ad is loaded.
-          isBannerAdLoaded.value = true;
-        },
-        onAdFailedToLoad: (ad, error) {
-          ad.dispose();
-          debugPrint('Banner ad failed to load: $error');
-          //retry loading after a delay.
-          Future.delayed(const Duration(seconds: 5), loadBannerAd);
-        },
-      ),
-    )..load();
-  }
-
-  
-  void disposeBannerAd() {
-    bannerAd?.dispose();
-    isBannerAdLoaded.dispose();
   }
 }
