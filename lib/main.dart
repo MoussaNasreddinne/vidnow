@@ -12,6 +12,7 @@ import 'package:test1/utils/app_themes.dart';
 import 'package:test1/services/app_translations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:test1/screens/auth_gate.dart';
 
 void main() async {
   //initializing needed services
@@ -53,7 +54,7 @@ class MyApp extends StatelessWidget {
         locale: const Locale('en'),
         fallbackLocale: const Locale('en'),
 
-        home: MainWrapper(),
+        home: AuthGate(),
       ),
     );
   }

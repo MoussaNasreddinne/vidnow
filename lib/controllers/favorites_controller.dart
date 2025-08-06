@@ -16,11 +16,10 @@ class FavoritesController extends GetxController {
 
   FavoritesController() {
     _loadFavoriteVideos();
-    //listens for changes in the favorite ids and updates ui
+    // This listener efficiently handles UI updates when favorites change.
     ever(_favoriteService.favoriteVideoIds, (_) => _handleFavoritesChange());
   }
 
-  //loads full video details for the favorite video ids
   Future<void> _loadFavoriteVideos() async {
     isLoadingFavorites(true);
     favoriteVideos.clear();
@@ -32,7 +31,7 @@ class FavoritesController extends GetxController {
     }
 
     try {
-      
+      // Use the more efficient fetchAllVideos() method
       final List<Video> allVideos = await _apiService.fetchAllVideos();
       favoriteVideos.assignAll(
           allVideos.where((video) => favIds.contains(video.id)).toList());
@@ -41,7 +40,8 @@ class FavoritesController extends GetxController {
     }
   }
 
-  //handles additions and removals from the favorites list to animate ui changes
+  // This logic for handling changes can remain largely the same,
+  // but it will also benefit from the more efficient video fetching.
   void _handleFavoritesChange() {
     final currentIds = favoriteVideos.map((v) => v.id).toList();
     final newIds = _favoriteService.getFavoriteVideoIdsList();

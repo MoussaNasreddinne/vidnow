@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart'; 
+import 'package:get/get.dart';
 import 'package:test1/widgets/gradient_background.dart';
 import 'package:test1/widgets/vidnow_appbar.dart';
-
-
-//static for now
+import 'package:test1/service_locator.dart';
+import 'package:test1/services/auth_service.dart';
 
 
 class ProfilePage extends StatelessWidget {
@@ -55,12 +54,12 @@ class ProfilePage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               Text(
-                'profileUserName'.tr,
+                'profileUserName'.tr, 
                 style: theme.textTheme.titleLarge?.copyWith(fontSize: 24),
               ),
               const SizedBox(height: 5),
               Text(
-                'profileUserEmail'.tr,
+                'profileUserEmail'.tr, 
                 style: theme.textTheme.bodyMedium?.copyWith(fontSize: 16),
               ),
               const SizedBox(height: 30),
@@ -106,7 +105,9 @@ class ProfilePage extends StatelessWidget {
                     _buildProfileOption(
                       icon: Icons.logout,
                       title: 'logout'.tr, 
-                      onTap: () {},
+                      onTap: () {
+                        locator<AuthService>().signOut();
+                      },
                       isLast: true,
                       context: context,
                     ),

@@ -1,5 +1,3 @@
-// lib/services/auth_service.dart
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,13 +5,9 @@ import 'package:get/get.dart';
 class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  
   Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
-
-  
   User? get currentUser => _firebaseAuth.currentUser;
 
-  
   Future<User?> signUpWithEmailAndPassword(String email, String password) async {
     try {
       final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
@@ -22,7 +16,6 @@ class AuthService {
       );
       return userCredential.user;
     } on FirebaseAuthException catch (e) {
-      
       Get.snackbar(
         'Sign-Up Error',
         e.message ?? 'An unknown error occurred during sign-up.',
@@ -34,7 +27,6 @@ class AuthService {
     }
   }
 
-  
   Future<User?> signInWithEmailAndPassword(String email, String password) async {
     try {
       final userCredential = await _firebaseAuth.signInWithEmailAndPassword(
@@ -43,7 +35,6 @@ class AuthService {
       );
       return userCredential.user;
     } on FirebaseAuthException catch (e) {
-      
       Get.snackbar(
         'Sign-In Error',
         e.message ?? 'An unknown error occurred during sign-in.',
@@ -55,7 +46,28 @@ class AuthService {
     }
   }
 
-  
+  // Sends a password reset email to the given address.
+  Future<void> sendPasswordResetEmail(String email) async {
+    try {
+      await _firebaseAuth.sendPasswordResetEmail(email: email.trim());
+      Get.snackbar(
+        'Success',
+        'A password reset link has been sent to your email.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } on FirebaseAuthException catch (e) {
+      Get.snackbar(
+        'Error',
+        e.message ?? 'Could not send password reset email.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
   Future<void> signOut() async {
     try {
       await _firebaseAuth.signOut();
