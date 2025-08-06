@@ -24,6 +24,7 @@ void main() async {
   await setupLocator();
   await locator<AdService>().initialize();
   locator<AdService>().loadInterstitialAd();
+  locator<AdController>().initialize();
   MobileAds.instance.updateRequestConfiguration(
     RequestConfiguration(
       testDeviceIds: ['bc50e66a-4872-4970-b7ca-2e9b28b56147'],

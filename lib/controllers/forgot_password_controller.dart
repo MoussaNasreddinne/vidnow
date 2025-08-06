@@ -3,9 +3,9 @@ import 'package:get/get.dart';
 import 'package:test1/service_locator.dart';
 import 'package:test1/services/auth_service.dart';
 
-// Manages the state and logic for the Forgot Password screen.
+
 class ForgotPasswordController extends GetxController {
-  // Accesses the authentication service.
+  // Accesses the authentication service
   final AuthService _authService = locator<AuthService>();
   
   // Controller for the email text field.

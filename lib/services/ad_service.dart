@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 
 class AdService {
@@ -46,7 +45,7 @@ class AdService {
           debugPrint('AdService: Failed to load interstitial ad: $error');
           _isInterstitialAdLoaded = false;
           // Retry after delay
-          Future.delayed(const Duration(seconds: 30), loadInterstitialAd);
+          Future.delayed(const Duration(seconds: 10), loadInterstitialAd);
         },
       ),
     );

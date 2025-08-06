@@ -11,10 +11,10 @@ class AdController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _initializeMobileAds();
+    initialize();
   }
 
-  Future<void> _initializeMobileAds() async {
+  Future<void> initialize() async {
     await MobileAds.instance.initialize();
     await MobileAds.instance.updateRequestConfiguration(
       RequestConfiguration(testDeviceIds: [_testDeviceId]),
@@ -43,7 +43,7 @@ class AdController extends GetxController {
           ad.dispose();
           isBannerAdLoaded.value = false;
           // Retry after delay
-          Future.delayed(const Duration(seconds: 30), _loadBannerAd);
+          Future.delayed(const Duration(seconds: 10), _loadBannerAd);
         },
         onAdOpened: (ad) => debugPrint('AdController: Banner ad opened'),
         onAdClosed: (ad) => debugPrint('AdController: Banner ad closed'),
