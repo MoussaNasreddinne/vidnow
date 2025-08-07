@@ -10,6 +10,7 @@ import 'package:test1/widgets/vidnow_appbar.dart';
 import 'package:test1/widgets/video_card.dart';
 import 'package:test1/widgets/loading_indicator.dart';
 import 'package:test1/service_locator.dart';
+import 'package:test1/widgets/snackbar.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
@@ -69,7 +70,7 @@ class Home extends StatelessWidget {
                   Expanded(
                     child: Center(
                       child: Text(
-                        'noVideosFound'.tr, // Changed
+                        'noVideosFound'.tr,
                         style: TextStyle(color: Colors.white70, fontSize: 16),
                       ),
                     ),
@@ -101,13 +102,11 @@ class Home extends StatelessWidget {
                                 Get.back();
                               } catch (e) {
                                 Get.back();
-                                Get.snackbar(
-                                  'error'.tr, // Changed
-                                  'failedToGetVideoStream'.trParams(
-                                    // Changed
-                                    {'error': e.toString()},
-                                  ),
-                                  snackPosition: SnackPosition.BOTTOM,
+                                CustomSnackbar.showErrorCustomSnackbar(
+                                  title: 'error'.tr,
+                                  message: 'failedToGetVideoStream'.trParams({
+                                    'error': e.toString().split(':')[0],
+                                  }),
                                 );
                                 debugPrint('Error getting stream URL: $e');
                                 return;

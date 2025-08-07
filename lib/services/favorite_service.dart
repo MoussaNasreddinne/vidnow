@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get/get.dart';
 import 'package:test1/models/video.dart';
 import 'package:flutter/material.dart';
+import 'package:test1/widgets/snackbar.dart';
 
 class FavoriteService {
   late SharedPreferences _prefs;
@@ -26,8 +27,12 @@ class FavoriteService {
     final String? encodedMap = _prefs.getString(_favoritesKey);
     if (encodedMap != null) {
       final List<dynamic> decodedList = json.decode(encodedMap);
-      favoriteVideoIds.assignAll(decodedList.map((id) => id.toString()).toSet());
-      debugPrint('FavoriteService: Loaded ${favoriteVideoIds.length} favorite IDs.');
+      favoriteVideoIds.assignAll(
+        decodedList.map((id) => id.toString()).toSet(),
+      );
+      debugPrint(
+        'FavoriteService: Loaded ${favoriteVideoIds.length} favorite IDs.',
+      );
     }
   }
 
@@ -35,7 +40,9 @@ class FavoriteService {
   Future<void> _saveFavoriteIds() async {
     final String encodedMap = json.encode(favoriteVideoIds.toList());
     await _prefs.setString(_favoritesKey, encodedMap);
-    debugPrint('FavoriteService: Saved ${favoriteVideoIds.length} favorite IDs.');
+    debugPrint(
+      'FavoriteService: Saved ${favoriteVideoIds.length} favorite IDs.',
+    );
   }
 
   bool isFavorite(String videoId) {
@@ -47,32 +54,27 @@ class FavoriteService {
     if (!favoriteVideoIds.contains(video.id)) {
       favoriteVideoIds.add(video.id);
       await _saveFavoriteIds();
-      Get.snackbar(
-        'Favorites',
-        'Added "${video.title}" to favorites!',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
+
+      CustomSnackbar.showSuccessCustomSnackbar(
+        title: 'Favorites',
+        message: 'Added "${video.title}" to favorites!',
       );
       debugPrint('FavoriteService: Added video ID: ${video.id}');
     }
   }
 
   Future<void> removeFavorite(String videoId, String videoTitle) async {
-    if (favoriteVideoIds.remove(videoId)) { 
+    if (favoriteVideoIds.remove(videoId)) {
       await _saveFavoriteIds();
-      Get.snackbar(
-        'Favorites',
-        'Removed "${videoTitle}" from favorites!',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+      CustomSnackbar.showSuccessCustomSnackbar(
+        title: 'Favorites',
+        message: 'Removed "$videoTitle" to favorites!',
       );
       debugPrint('FavoriteService: Removed video ID: $videoId');
     }
   }
 
   List<String> getFavoriteVideoIdsList() {
-    return favoriteVideoIds.toList(); 
+    return favoriteVideoIds.toList();
   }
 }

@@ -3,6 +3,7 @@ import 'package:test1/models/category.dart';
 import 'package:test1/services/Api_service.dart';
 import 'package:test1/models/video.dart';
 import 'package:test1/service_locator.dart';
+import 'package:test1/widgets/snackbar.dart';
 
 class RecommendationController extends GetxController {
   final VideoApiService _apiService = locator<VideoApiService>();
@@ -21,10 +22,9 @@ class RecommendationController extends GetxController {
       List<Category> fetchedCategories = await _apiService.fetchCategories();
       _allCategories.assignAll(fetchedCategories);
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to load videos: $e',
-        snackPosition: SnackPosition.BOTTOM,
+      CustomSnackbar.showErrorCustomSnackbar(
+        title: 'Error',
+        message: 'Failed to load videos',
       );
       print('Error fetching categories: $e');
     } finally {

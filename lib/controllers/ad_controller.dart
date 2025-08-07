@@ -24,6 +24,9 @@ class AdController extends GetxController {
   }
 
   void _loadBannerAd() {
+    if (isBannerAdLoaded.value) {
+      return;
+    }
     isBannerAdLoaded.value = false;
     bannerAd?.dispose();
 

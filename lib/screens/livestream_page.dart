@@ -6,25 +6,28 @@ import 'package:test1/widgets/vidnow_appbar.dart';
 import 'package:test1/widgets/video_card.dart';
 import 'package:test1/widgets/loading_indicator.dart';
 import 'package:test1/screens/videostream.dart';
+import 'package:test1/widgets/snackbar.dart';
 
 class LivestreamPage extends StatelessWidget {
   const LivestreamPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    
-    final LivestreamController livestreamController = Get.put(LivestreamController());
+    final LivestreamController livestreamController = Get.put(
+      LivestreamController(),
+    );
     return GradientBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: VidNowAppBar(), 
-        body: Obx(() { // rebuilds the body based on the livestream controller's state
+        appBar: VidNowAppBar(),
+        body: Obx(() {
+          // rebuilds the body based on the livestream controller's state
           if (livestreamController.isLoading.value) {
             return const LoadingIndicator();
           } else if (livestreamController.liveChannels.isEmpty) {
             return Center(
               child: Text(
-                'noLiveChannels'.tr, 
+                'noLiveChannels'.tr,
                 style: const TextStyle(color: Colors.white70, fontSize: 16),
                 textAlign: TextAlign.center,
               ),
@@ -43,8 +46,12 @@ class LivestreamPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(5),
                       ),
                       child: Text(
-                        " ${'liveChannels'.tr} ", 
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white),
+                        " ${'liveChannels'.tr} ",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
@@ -52,19 +59,22 @@ class LivestreamPage extends StatelessWidget {
                     child: ListView.builder(
                       itemCount: livestreamController.liveChannels.length,
                       itemBuilder: (context, index) {
-                        final liveChannel = livestreamController.liveChannels[index];
+                        final liveChannel =
+                            livestreamController.liveChannels[index];
                         return VideoCard(
-                          recommendation: liveChannel, 
+                          recommendation: liveChannel,
                           onTap: () {
-                            if (liveChannel.streamUrl != null && liveChannel.streamUrl!.isNotEmpty) {
-                              Get.to(() => VideoPlayerScreen(videoUrl: liveChannel.streamUrl!));
+                            if (liveChannel.streamUrl != null &&
+                                liveChannel.streamUrl!.isNotEmpty) {
+                              Get.to(
+                                () => VideoPlayerScreen(
+                                  videoUrl: liveChannel.streamUrl!,
+                                ),
+                              );
                             } else {
-                              Get.snackbar(
-                                'error'.tr, // Changed
-                                'liveStreamNotAvailable'.tr, // Changed
-                                snackPosition: SnackPosition.BOTTOM,
-                                backgroundColor: Colors.orange,
-                                colorText: Colors.white,
+                              CustomSnackbar.showErrorCustomSnackbar(
+                                title: 'error'.tr,
+                                message: 'liveStreamNotAvailable'.tr,
                               );
                             }
                           },

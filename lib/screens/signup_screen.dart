@@ -8,7 +8,6 @@ class SignUpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Find the existing controller instance
     final LoginController controller = Get.find();
     final theme = Theme.of(context);
 

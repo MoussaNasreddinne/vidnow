@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:test1/controllers/login_controller.dart';
-import 'package:test1/screens/forgot_password_screen.dart'; // Import the new screen
+import 'package:test1/screens/forgot_password_screen.dart'; 
 import 'package:test1/screens/signup_screen.dart';
 import 'package:test1/widgets/gradient_background.dart';
 
@@ -49,7 +49,6 @@ class LoginScreen extends StatelessWidget {
                   ),
                   obscureText: true,
                 ),
-                // --- ADDED WIDGET ---
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(

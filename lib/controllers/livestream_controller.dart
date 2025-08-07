@@ -1,11 +1,12 @@
 import 'package:get/get.dart';
 import 'package:test1/services/Api_service.dart';
-import 'package:test1/models/video.dart'; 
+import 'package:test1/models/video.dart';
 import 'package:flutter/material.dart';
+import 'package:test1/widgets/snackbar.dart';
 
 class LivestreamController extends GetxController {
   var isLoading = true.obs;
-  final RxList<Video> liveChannels = <Video>[].obs; 
+  final RxList<Video> liveChannels = <Video>[].obs;
   final VideoApiService _apiService = VideoApiService();
 
   @override
@@ -20,14 +21,13 @@ class LivestreamController extends GetxController {
       isLoading(true);
       final List<Video> fetchedChannels = await _apiService.fetchLiveChannels();
       liveChannels.assignAll(fetchedChannels);
-      debugPrint('LivestreamController: Fetched ${fetchedChannels.length} live channels.');
+      debugPrint(
+        'LivestreamController: Fetched ${fetchedChannels.length} live channels.',
+      );
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to load live channels: $e',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+      CustomSnackbar.showErrorCustomSnackbar(
+        title: 'Error ',
+        message: 'Failed to load live channels',
       );
       debugPrint('LivestreamController: Error fetching live channels: $e');
       liveChannels.clear();

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:test1/widgets/snackbar.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 import 'package:test1/services/ad_service.dart';
@@ -36,7 +37,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     ).animate(CurvedAnimation(parent: _fadeController, curve: Curves.easeIn));
     _initializePlayer();
   }
-   // Initializes the video player with the given URL
+
+  // Initializes the video player with the given URL
   Future<void> _initializePlayer() async {
     setState(() => _statusKey = 'videoPlayerParsingUrl');
     debugPrint(
@@ -104,9 +106,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                 const Icon(Icons.error_outline, color: Colors.white, size: 50),
                 const SizedBox(height: 10),
                 Text(
-                  'couldNotPlayVideo'.trParams({
-                    'errorMessage': errorMessage,
-                  }), 
+                  'couldNotPlayVideo'.trParams({'errorMessage': errorMessage}),
                   style: const TextStyle(color: Colors.white),
                   textAlign: TextAlign.center,
                 ),
@@ -129,17 +129,15 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
       debugPrint("VideoPlayerScreen: Error during _initializePlayer: $e");
       setState(() {
         _isLoading = false;
-        
+
         _statusKey = 'couldNotPlayVideo'.trParams({
           'errorMessage': e.toString(),
         });
       });
-      Get.snackbar(
-        'playbackError'.tr, 
-        _statusKey, 
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+
+      CustomSnackbar.showErrorCustomSnackbar(
+        title: 'playbackError'.tr,
+        message: _statusKey,
       );
     }
   }
@@ -194,7 +192,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                         return Opacity(
                           opacity: _fadeAnimation.value,
                           child: Text(
-                            _statusKey.tr, 
+                            _statusKey.tr,
                             style: const TextStyle(
                               color: Colors.white70,
                               fontSize: 14,
@@ -227,8 +225,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                             const SizedBox(height: 10),
                             Text(
                               _statusKey.contains('Error')
-                                  ? _statusKey 
-                                  : 'playbackCouldNotBeStarted'.tr, 
+                                  ? _statusKey
+                                  : 'playbackCouldNotBeStarted'.tr,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,

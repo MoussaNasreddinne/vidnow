@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:test1/widgets/snackbar.dart';
 
 class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -16,12 +17,9 @@ class AuthService {
       );
       return userCredential.user;
     } on FirebaseAuthException catch (e) {
-      Get.snackbar(
-        'Sign-Up Error',
-        e.message ?? 'An unknown error occurred during sign-up.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+      CustomSnackbar.showErrorCustomSnackbar(
+        title:'Sign-Up Error',
+        message: e.message??'An unknown error occured during sign-in. ',
       );
       return null;
     }
@@ -35,36 +33,29 @@ class AuthService {
       );
       return userCredential.user;
     } on FirebaseAuthException catch (e) {
-      Get.snackbar(
-        'Sign-In Error',
-        e.message ?? 'An unknown error occurred during sign-in.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+      CustomSnackbar.showErrorCustomSnackbar(
+        title:'Sign-In Error',
+        message: e.message??'An unknown error occured during sign-in. ',
       );
       return null;
     }
   }
 
-  // Sends a password reset email to the given address.
+ 
   Future<void> sendPasswordResetEmail(String email) async {
     try {
       await _firebaseAuth.sendPasswordResetEmail(email: email.trim());
-      Get.snackbar(
-        'Success',
-        'A password reset link has been sent to your email.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
+      CustomSnackbar.showSuccessCustomSnackbar(
+        title:'Success',
+        message: 'A password reset link has been sent to your email.',
       );
+      
     } on FirebaseAuthException catch (e) {
-      Get.snackbar(
-        'Error',
-        e.message ?? 'Could not send password reset email.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+      CustomSnackbar.showErrorCustomSnackbar(
+        title:'Error',
+        message: e.message??'Could not send password reset email.',
       );
+      
     }
   }
 
@@ -72,12 +63,9 @@ class AuthService {
     try {
       await _firebaseAuth.signOut();
     } on FirebaseAuthException catch (e) {
-      Get.snackbar(
-        'Sign-Out Error',
-        e.message ?? 'An unknown error occurred during sign-out.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+      CustomSnackbar.showErrorCustomSnackbar(
+        title:'Sign-Out Error',
+        message: e.message??'An unknown error occurred during sign-out.',
       );
     }
   }

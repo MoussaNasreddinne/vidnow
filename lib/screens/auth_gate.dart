@@ -5,6 +5,7 @@ import 'package:test1/main.dart';
 import 'package:test1/screens/login_screen.dart';
 import 'package:test1/widgets/loading_indicator.dart';
 
+
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key});
 

@@ -3,13 +3,11 @@ import 'package:get/get.dart';
 import 'package:test1/controllers/forgot_password_controller.dart';
 import 'package:test1/widgets/gradient_background.dart';
 
-// The UI for the "Forgot Password" feature.
 class ForgotPasswordScreen extends StatelessWidget {
   const ForgotPasswordScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Initializes the controller for this screen's logic.
     final ForgotPasswordController controller = Get.put(ForgotPasswordController());
     final theme = Theme.of(context);
 
