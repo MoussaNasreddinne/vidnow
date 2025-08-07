@@ -3,13 +3,14 @@ import 'package:get/get.dart';
 import 'package:test1/controllers/login_controller.dart';
 import 'package:test1/screens/forgot_password_screen.dart'; 
 import 'package:test1/screens/signup_screen.dart';
+import 'package:test1/service_locator.dart';
 import 'package:test1/widgets/gradient_background.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
   @override
   Widget build(BuildContext context) {
-    final LoginController controller = Get.put(LoginController());
+    final LoginController controller = locator<LoginController>();
     final theme = Theme.of(context);
 
     return GradientBackground(

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:test1/main.dart';
 import 'package:test1/service_locator.dart';
 import 'package:test1/services/auth_service.dart';
+import 'package:test1/widgets/snackbar.dart';
 
 class LoginController extends GetxController {
   final AuthService _authService = locator<AuthService>();
@@ -18,6 +19,11 @@ class LoginController extends GetxController {
     super.onClose();
   }
 
+  void clearFields() {
+    emailController.clear();
+    passwordController.clear();
+  }
+
   Future<void> login() async {
     isLoading(true);
     try {
@@ -26,7 +32,6 @@ class LoginController extends GetxController {
         passwordController.text,
       );
       if (user != null) {
-        // Navigate to the main app, clearing the auth screens from history
         Get.offAll(() => MainWrapper());
       }
     } finally {
@@ -42,12 +47,15 @@ class LoginController extends GetxController {
         passwordController.text,
       );
       if (user != null) {
-        // Navigate to the main app on successful sign-up
-        Get.offAll(() => MainWrapper());
+        CustomSnackbar.showSuccessCustomSnackbar(
+          title: 'Account Created',
+          message: 'Please log in with your new credentials.',
+        );
+        await _authService.signOut();
+        print('sign out');
       }
     } finally {
       isLoading(false);
     }
   }
-  
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:test1/controllers/login_controller.dart';
 import 'package:test1/widgets/gradient_background.dart';
 import 'package:test1/widgets/vidnow_appbar.dart';
 import 'package:test1/service_locator.dart';
@@ -7,7 +8,7 @@ import 'package:test1/services/auth_service.dart';
 
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+  ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {

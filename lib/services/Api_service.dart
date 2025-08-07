@@ -5,16 +5,15 @@ import 'package:test1/models/video.dart';
 import 'package:http/http.dart' as http;
 
 class VideoApiService {
-  static const String _baseUrl = "https://d2p4ou0is754xb.cloudfront.net";
+  final String _baseUrl;
+
+  VideoApiService({required String baseUrl}) : _baseUrl = baseUrl;
 
   Future<List<Category>> fetchCategories() async {
     final response =
         await http.get(Uri.parse('$_baseUrl/av_getmobibasevideos?language=en'));
-
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseData = jsonDecode(response.body);
-
-     
       if (responseData['Content'] is List &&
           (responseData['Content'] as List).isNotEmpty) {
         final List<dynamic> outerContent = responseData['Content'];
@@ -26,21 +25,17 @@ class VideoApiService {
               .toList();
         }
       }
-      // Return an empty list if the structure is not as expected
       return [];
     } else {
       throw Exception('Failed to load categories: ${response.statusCode}');
     }
   }
 
- 
   Future<List<Video>> fetchAllVideos() async {
     final categories = await fetchCategories();
-    // Flatten the list of lists of videos into a single list
     return categories.expand((category) => category.videos).toList();
   }
 
-  // fetches direct stream url for a specific vid id
   Future<String> getStreamUrl(String videoId) async {
     final response =
         await http.get(Uri.parse('$_baseUrl/av_getstreamvideo?id=$videoId'));
@@ -72,7 +67,7 @@ class VideoApiService {
                   'https://placehold.co/400x225/333333/FFFFFF?text=Live',
               'StreamURL': json['ChannelURL']?.replaceAll('"', '').trim() ?? '',
               'Description': json['ChannelDescription'] ?? '',
-              'isPremium': 'false', 
+              'isPremium': 'false',
             });
           }).toList();
         } else {

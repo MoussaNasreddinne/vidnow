@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:test1/widgets/snackbar.dart';
+import 'package:test1/service_locator.dart';
+import 'package:test1/controllers/login_controller.dart';
 
 class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -18,8 +20,8 @@ class AuthService {
       return userCredential.user;
     } on FirebaseAuthException catch (e) {
       CustomSnackbar.showErrorCustomSnackbar(
-        title:'Sign-Up Error',
-        message: e.message??'An unknown error occured during sign-in. ',
+        title: 'Sign-Up Error',
+        message: e.message ?? 'An unknown error occured during sign-up.',
       );
       return null;
     }
@@ -34,38 +36,39 @@ class AuthService {
       return userCredential.user;
     } on FirebaseAuthException catch (e) {
       CustomSnackbar.showErrorCustomSnackbar(
-        title:'Sign-In Error',
-        message: e.message??'An unknown error occured during sign-in. ',
+        title: 'Sign-In Error',
+        message: e.message ?? 'An unknown error occured during sign-in.',
       );
       return null;
     }
   }
 
- 
   Future<void> sendPasswordResetEmail(String email) async {
     try {
       await _firebaseAuth.sendPasswordResetEmail(email: email.trim());
       CustomSnackbar.showSuccessCustomSnackbar(
-        title:'Success',
+        title: 'Success',
         message: 'A password reset link has been sent to your email.',
       );
-      
     } on FirebaseAuthException catch (e) {
       CustomSnackbar.showErrorCustomSnackbar(
-        title:'Error',
-        message: e.message??'Could not send password reset email.',
+        title: 'Error',
+        message: e.message ?? 'Could not send password reset email.',
       );
-      
     }
   }
 
   Future<void> signOut() async {
     try {
+      if (locator.isRegistered<LoginController>()) {
+        locator<LoginController>().clearFields();
+        print('fields cleared');
+      }
       await _firebaseAuth.signOut();
     } on FirebaseAuthException catch (e) {
       CustomSnackbar.showErrorCustomSnackbar(
-        title:'Sign-Out Error',
-        message: e.message??'An unknown error occurred during sign-out.',
+        title: 'Sign-Out Error',
+        message: e.message ?? 'An unknown error occurred during sign-out.',
       );
     }
   }

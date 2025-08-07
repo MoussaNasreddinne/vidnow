@@ -7,7 +7,7 @@ import 'package:test1/widgets/snackbar.dart';
 class LivestreamController extends GetxController {
   var isLoading = true.obs;
   final RxList<Video> liveChannels = <Video>[].obs;
-  final VideoApiService _apiService = VideoApiService();
+  final VideoApiService _apiService = VideoApiService(baseUrl: ''); 
 
   @override
   void onInit() {
@@ -26,7 +26,7 @@ class LivestreamController extends GetxController {
       );
     } catch (e) {
       CustomSnackbar.showErrorCustomSnackbar(
-        title: 'Error ',
+        title: 'Error',
         message: 'Failed to load live channels',
       );
       debugPrint('LivestreamController: Error fetching live channels: $e');

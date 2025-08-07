@@ -5,18 +5,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ThemeController extends GetxController {
   final _isDarkModeKey = 'isDarkMode';
   var isDarkMode = true.obs;
+  final bool _defaultIsDark;
+
+  ThemeController({required bool defaultIsDark}) : _defaultIsDark = defaultIsDark;
 
   @override
   void onInit() {
     super.onInit();
     _loadThemeFromPrefs();
   }
-  // Gets the current theme mode based on the isDarkMode
+
   ThemeMode get theme => isDarkMode.value ? ThemeMode.dark : ThemeMode.light;
 
   Future<void> _loadThemeFromPrefs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    isDarkMode.value = prefs.getBool(_isDarkModeKey) ?? true; 
+    isDarkMode.value = prefs.getBool(_isDarkModeKey) ?? _defaultIsDark;
   }
 
   Future<void> _saveThemeToPrefs(bool isDark) async {

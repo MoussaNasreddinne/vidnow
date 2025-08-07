@@ -7,7 +7,6 @@ import 'package:test1/widgets/snackbar.dart';
 
 class RecommendationController extends GetxController {
   final VideoApiService _apiService = locator<VideoApiService>();
-
   var selectedCategoryIndex = 0.obs;
   var isLoading = true.obs;
   final RxList<Category> _allCategories = <Category>[].obs;
@@ -15,6 +14,7 @@ class RecommendationController extends GetxController {
   RecommendationController() {
     fetchCategories();
   }
+  
   // Fetches video categories from the API.
   void fetchCategories() async {
     try {

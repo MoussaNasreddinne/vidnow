@@ -4,13 +4,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class LanguageController extends GetxController {
   final _languageKey = 'appLanguage';
-  var currentLocale = const Locale('en').obs;
+  late final Rx<Locale> currentLocale;
+  final String _defaultLanguageCode;
+
+  LanguageController({required String defaultLanguageCode})
+      : _defaultLanguageCode = defaultLanguageCode {
+    currentLocale = Locale(_defaultLanguageCode).obs;
+  }
 
   @override
   void onInit() {
     super.onInit();
     _loadLanguageFromPrefs();
   }
+
   //loads the saved langauge from shared preferences on startup
   Future<void> _loadLanguageFromPrefs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -19,6 +26,7 @@ class LanguageController extends GetxController {
       currentLocale.value = Locale(languageCode);
     }
   }
+
   // Saves the selected language to SharedPreferences.
   Future<void> _saveLanguageToPrefs(String languageCode) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

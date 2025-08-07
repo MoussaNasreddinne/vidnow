@@ -5,6 +5,10 @@ import 'package:flutter/material.dart';
 class AdService {
   InterstitialAd? _interstitialAd;
   bool _isInterstitialAdLoaded = false;
+  final String _interstitialAdUnitId;
+
+  AdService({required String interstitialAdUnitId}) : _interstitialAdUnitId = interstitialAdUnitId;
+
   final String _testDeviceId = 'bc50e66a-4872-4970-b7ca-2e9b28b56147';
 
   Future<void> initialize() async {
@@ -16,9 +20,7 @@ class AdService {
 
   void loadInterstitialAd() {
     InterstitialAd.load(
-      adUnitId: Platform.isAndroid
-          ? 'ca-app-pub-3940256099942544/1033173712' // Test ID
-          : 'ca-app-pub-3940256099942544/4411468910', // Test ID
+      adUnitId: _interstitialAdUnitId,
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (ad) {

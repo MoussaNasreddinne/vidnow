@@ -6,6 +6,10 @@ import 'package:flutter/material.dart';
 class AdController extends GetxController {
   BannerAd? bannerAd;
   var isBannerAdLoaded = false.obs;
+  final String _bannerAdUnitId;
+
+  AdController({required String bannerAdUnitId}) : _bannerAdUnitId = bannerAdUnitId;
+
   final String _testDeviceId = 'bc50e66a-4872-4970-b7ca-2e9b28b56147';
 
   @override
@@ -31,9 +35,7 @@ class AdController extends GetxController {
     bannerAd?.dispose();
 
     bannerAd = BannerAd(
-      adUnitId: Platform.isAndroid
-          ? 'ca-app-pub-3940256099942544/6300978111' // Test ID
-          : 'ca-app-pub-3940256099942544/2934735716', // Test ID
+      adUnitId: _bannerAdUnitId,
       request: const AdRequest(),
       size: AdSize.banner,
       listener: BannerAdListener(

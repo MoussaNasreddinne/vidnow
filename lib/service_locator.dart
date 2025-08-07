@@ -16,6 +16,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:test1/controllers/login_controller.dart';
 import 'package:test1/controllers/auth_controller.dart';
 import 'package:test1/controllers/forgot_password_controller.dart';
+import 'package:test1/services/remote_config_service.dart';
 
 
 GetIt locator = GetIt.instance;
@@ -26,9 +27,15 @@ Future<void> setupLocator() async {
   locator.registerLazySingleton(() => FirebaseFirestore.instance);
   
   // Services
-  locator.registerLazySingleton(() => VideoApiService());
-  locator.registerLazySingleton(() => AdService());
+  locator.registerSingletonAsync<RemoteConfigService>(() => RemoteConfigService.create());
+  await locator.isReady<RemoteConfigService>();
+  final remoteConfig = locator<RemoteConfigService>();
+  locator.registerLazySingleton(() => VideoApiService(baseUrl: remoteConfig.apiBaseUrl));
+  locator.registerLazySingleton(() => AdService(interstitialAdUnitId: remoteConfig.interstitialAdUnitId));
   locator.registerLazySingleton(() => AuthService()); 
+  
+  
+  await locator.isReady<RemoteConfigService>();
 
   // initialized first since it needs shared preferences
   locator.registerSingletonAsync<FavoriteService>(() async {
@@ -41,16 +48,20 @@ Future<void> setupLocator() async {
   await locator.isReady<FavoriteService>();
 
   // Controllers 
+  locator.registerLazySingleton(() => AdController(bannerAdUnitId: remoteConfig.bannerAdUnitId));
+  locator.registerLazySingleton(() => ThemeController(defaultIsDark: remoteConfig.defaultThemeIsDark));
+  locator.registerLazySingleton(() => LanguageController(defaultLanguageCode: remoteConfig.defaultLanguageCode));
+
   locator.registerLazySingleton(() => ForgotPasswordController());
   locator.registerLazySingleton(() => LoginController());
-  locator.registerLazySingleton(() => AdController());
+  //locator.registerLazySingleton(() => AdController());
   locator.registerLazySingleton(() => ButtonController());
   locator.registerLazySingleton(() => FavoritesController());
   locator.registerLazySingleton(() => LivestreamController());
   locator.registerLazySingleton(() => NavController());
   locator.registerLazySingleton(() => RecommendationController());
-  locator.registerLazySingleton(() => ThemeController());
-  locator.registerLazySingleton(() => LanguageController());
+  //locator.registerLazySingleton(() => ThemeController());
+  //locator.registerLazySingleton(() => LanguageController());
   locator.registerLazySingleton(() => AuthController());
   
 }

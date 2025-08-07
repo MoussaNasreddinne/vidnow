@@ -9,7 +9,6 @@ import 'package:test1/service_locator.dart';
 class FavoritesController extends GetxController {
   final FavoriteService _favoriteService = locator<FavoriteService>();
   final VideoApiService _apiService = locator<VideoApiService>();
-
   final RxList<Video> favoriteVideos = <Video>[].obs;
   final RxBool isLoadingFavorites = true.obs;
   final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
