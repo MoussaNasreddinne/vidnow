@@ -13,6 +13,7 @@ import 'package:test1/services/app_translations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:test1/screens/auth_gate.dart';
+import 'package:test1/controllers/language_controller.dart'; // ADDED: Import LanguageController
 
 void main() async {
   //initializing needed services
@@ -37,12 +38,14 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
+  // MODIFIED: Get instances for both controllers
   final ThemeController themeController = locator<ThemeController>();
+  final LanguageController languageController = locator<LanguageController>();
   MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    //rebuilds when theme changes
+    //rebuilds when theme or language changes
     return Obx(
       () => GetMaterialApp(
         debugShowCheckedModeBanner: false,
@@ -52,8 +55,9 @@ class MyApp extends StatelessWidget {
 
         translations: AppTranslations(),
 
-        locale: const Locale('en'),
-        fallbackLocale: const Locale('en'),
+        // MODIFIED: Locale is now dynamically set by the LanguageController
+        locale: languageController.currentLocale.value, 
+        fallbackLocale: languageController.currentLocale.value,
 
         home: AuthGate(),
       ),

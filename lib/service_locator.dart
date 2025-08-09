@@ -40,7 +40,7 @@ Future<void> setupLocator() async {
   // initialized first since it needs shared preferences
   locator.registerSingletonAsync<FavoriteService>(() async {
     final favoriteService = FavoriteService();
-    await favoriteService.init(); // Call the new initializer
+    await favoriteService.init(); 
     return favoriteService;
   });
 

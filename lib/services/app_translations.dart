@@ -41,7 +41,11 @@ class AppTranslations extends Translations {
           'forgotPasswordInstruction':
               'Enter your email address and we will send you a link to reset your password.',
           'sendResetLink': 'Send Reset Link',
-          'dontHaveAccount': "Don't have an account? Sign Up",
+          'dontHaveAccount': "Don't have an account?\nSign Up",
+          'email': 'Email',
+          'password': 'Password',
+          'login': 'Login',
+          'signUp': 'Sign Up',
         },
         // ARABIC Translations
         'ar': {
@@ -80,7 +84,11 @@ class AppTranslations extends Translations {
           'forgotPasswordInstruction':
               'أدخل عنوان بريدك الإلكتروني وسنرسل لك رابطًا لإعادة تعيين كلمة مرورك.',
           'sendResetLink': 'إرسال رابط إعادة التعيين',
-          'dontHaveAccount': 'ليس لديك حساب؟ اشتراك',
+          'dontHaveAccount': 'ليس لديك حساب؟\nاشتراك',
+          'email': 'البريد الإلكتروني',
+          'password': 'كلمة المرور',
+          'login': 'تسجيل الدخول',
+          'signUp': 'اشتراك',
         },
         // FRENCH Translations
         'fr': {
@@ -120,7 +128,11 @@ class AppTranslations extends Translations {
           'forgotPasswordInstruction':
               'Entrez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.',
           'sendResetLink': 'Envoyer le lien de réinitialisation',
-          'dontHaveAccount': "Vous n'avez pas de compte? S'inscrire",
+          'dontHaveAccount': "Vous n'avez pas de compte?\nS'inscrire",
+          'email': 'Adresse e-mail',
+          'password': 'Mot de passe',
+          'login': 'Se connecter',
+          'signUp': 'S\'inscrire',
         },
       };
 }

@@ -11,7 +11,7 @@ class RemoteConfigService {
   static Future<RemoteConfigService> create() async {
     final remoteConfig = FirebaseRemoteConfig.instance;
 
-    // Set default values incase for some rerason app cant access firebase
+    
     await remoteConfig.setDefaults({
       'api_base_url': 'https://d2p4ou0is754xb.cloudfront.net',
       'default_theme_is_dark': true,

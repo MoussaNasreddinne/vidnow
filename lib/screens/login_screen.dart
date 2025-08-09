@@ -12,6 +12,7 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final LoginController controller = locator<LoginController>();
     final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
 
     return GradientBackground(
       child: Scaffold(
@@ -30,11 +31,11 @@ class LoginScreen extends StatelessWidget {
                 TextField(
                   controller: controller.emailController,
                   decoration: InputDecoration(
-                    labelText: 'Email',
+                    labelText: 'email'.tr, // MODIFIED
                     prefixIcon: const Icon(Icons.email_outlined),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                     filled: true,
-                    fillColor: theme.cardColor,
+                    fillColor: isDarkMode ? Colors.black.withOpacity(0.3) : Colors.white.withOpacity(0.3),
                   ),
                   keyboardType: TextInputType.emailAddress,
                 ),
@@ -42,11 +43,11 @@ class LoginScreen extends StatelessWidget {
                 TextField(
                   controller: controller.passwordController,
                   decoration: InputDecoration(
-                    labelText: 'Password',
+                    labelText: 'password'.tr, // MODIFIED
                     prefixIcon: const Icon(Icons.lock_outline),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                     filled: true,
-                    fillColor: theme.cardColor,
+                    fillColor: isDarkMode ? Colors.black.withOpacity(0.3) : Colors.white.withOpacity(0.3),
                   ),
                   obscureText: true,
                 ),
@@ -56,7 +57,7 @@ class LoginScreen extends StatelessWidget {
                     onPressed: () {
                       Get.to(() => const ForgotPasswordScreen());
                     },
-                    child: Text('forgotPassword'.tr),
+                    child: Text('forgotPassword'.tr, style: TextStyle(color: theme.primaryColor)),
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -69,7 +70,7 @@ class LoginScreen extends StatelessWidget {
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
                           ),
-                          child: const Text('Login', style: TextStyle(fontSize: 18)),
+                          child: Text('login'.tr, style: const TextStyle(fontSize: 18)), // MODIFIED
                         ),
                       )),
                 const SizedBox(height: 20),
@@ -79,7 +80,7 @@ class LoginScreen extends StatelessWidget {
                     controller.passwordController.clear();
                     Get.to(() => const SignUpScreen());
                   },
-                  child: Text("dontHaveAccount".tr),
+                  child: Text("dontHaveAccount".tr, style: TextStyle(color: theme.primaryColor),textAlign: TextAlign.center),
                 ),
               ],
             ),

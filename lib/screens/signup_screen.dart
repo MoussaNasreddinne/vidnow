@@ -6,17 +6,17 @@ import 'package:test1/service_locator.dart';
 
 class SignUpScreen extends StatelessWidget {
   const SignUpScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     final LoginController controller = locator<LoginController>();
     final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
 
     return GradientBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: const Text('Create Account'),
+          title: Text('createAccount'.tr), // MODIFIED
           backgroundColor: Colors.transparent,
           elevation: 0,
         ),
@@ -29,11 +29,11 @@ class SignUpScreen extends StatelessWidget {
                 TextField(
                   controller: controller.emailController,
                   decoration: InputDecoration(
-                    labelText: 'Email',
+                    labelText: 'email'.tr, // MODIFIED
                     prefixIcon: const Icon(Icons.email_outlined),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                     filled: true,
-                    fillColor: theme.cardColor,
+                    fillColor: isDarkMode ? Colors.black : Colors.white,
                   ),
                   keyboardType: TextInputType.emailAddress,
                 ),
@@ -41,11 +41,11 @@ class SignUpScreen extends StatelessWidget {
                 TextField(
                   controller: controller.passwordController,
                   decoration: InputDecoration(
-                    labelText: 'Password',
+                    labelText: 'password'.tr, // MODIFIED
                     prefixIcon: const Icon(Icons.lock_outline),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                     filled: true,
-                    fillColor: theme.cardColor,
+                    fillColor: isDarkMode ? Colors.black : Colors.white,
                   ),
                   obscureText: true,
                 ),
@@ -59,7 +59,7 @@ class SignUpScreen extends StatelessWidget {
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
                           ),
-                          child: const Text('Sign Up', style: TextStyle(fontSize: 18)),
+                          child: Text('signUp'.tr, style: const TextStyle(fontSize: 18)), // MODIFIED
                         ),
                       )),
               ],

@@ -3,11 +3,12 @@ import 'package:test1/services/Api_service.dart';
 import 'package:test1/models/video.dart';
 import 'package:flutter/material.dart';
 import 'package:test1/widgets/snackbar.dart';
+import 'package:test1/service_locator.dart';
 
 class LivestreamController extends GetxController {
   var isLoading = true.obs;
   final RxList<Video> liveChannels = <Video>[].obs;
-  final VideoApiService _apiService = VideoApiService(baseUrl: ''); 
+  final VideoApiService _apiService = locator<VideoApiService>();
 
   @override
   void onInit() {

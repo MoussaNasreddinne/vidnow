@@ -29,6 +29,7 @@ dependencies:
   
   cupertino_icons: ^1.0.8
   firebase_remote_config: ^4.4.7
+  firebase_analytics: ^10.10.7
 
 dev_dependencies:
   flutter_test:
@@ -50,7 +51,7 @@ flutter:
   
   assets:
    - assets/images/profile.jpg
-   - lib/l10n/
+  
    
    
 

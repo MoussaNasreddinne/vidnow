@@ -4,9 +4,11 @@ import 'package:get/get.dart';
 import 'package:test1/widgets/snackbar.dart';
 import 'package:test1/service_locator.dart';
 import 'package:test1/controllers/login_controller.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
   User? get currentUser => _firebaseAuth.currentUser;
@@ -17,6 +19,7 @@ class AuthService {
         email: email.trim(),
         password: password,
       );
+      
       return userCredential.user;
     } on FirebaseAuthException catch (e) {
       CustomSnackbar.showErrorCustomSnackbar(
