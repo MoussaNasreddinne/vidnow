@@ -16,7 +16,7 @@ class SignUpScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: Text('createAccount'.tr), // MODIFIED
+          title: Text('createAccount'.tr), 
           backgroundColor: Colors.transparent,
           elevation: 0,
         ),
@@ -29,7 +29,7 @@ class SignUpScreen extends StatelessWidget {
                 TextField(
                   controller: controller.emailController,
                   decoration: InputDecoration(
-                    labelText: 'email'.tr, // MODIFIED
+                    labelText: 'email'.tr, 
                     prefixIcon: const Icon(Icons.email_outlined),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                     filled: true,
@@ -41,7 +41,7 @@ class SignUpScreen extends StatelessWidget {
                 TextField(
                   controller: controller.passwordController,
                   decoration: InputDecoration(
-                    labelText: 'password'.tr, // MODIFIED
+                    labelText: 'password'.tr, 
                     prefixIcon: const Icon(Icons.lock_outline),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                     filled: true,
@@ -59,7 +59,7 @@ class SignUpScreen extends StatelessWidget {
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
                           ),
-                          child: Text('signUp'.tr, style: const TextStyle(fontSize: 18)), // MODIFIED
+                          child: Text('signUp'.tr, style: const TextStyle(fontSize: 18)), 
                         ),
                       )),
               ],

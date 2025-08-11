@@ -31,11 +31,11 @@ class LoginScreen extends StatelessWidget {
                 TextField(
                   controller: controller.emailController,
                   decoration: InputDecoration(
-                    labelText: 'email'.tr, // MODIFIED
+                    labelText: 'email'.tr, 
                     prefixIcon: const Icon(Icons.email_outlined),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                     filled: true,
-                    fillColor: isDarkMode ? Colors.black.withOpacity(0.3) : Colors.white.withOpacity(0.3),
+                    fillColor: isDarkMode ? Colors.black : Colors.white,
                   ),
                   keyboardType: TextInputType.emailAddress,
                 ),
@@ -43,11 +43,11 @@ class LoginScreen extends StatelessWidget {
                 TextField(
                   controller: controller.passwordController,
                   decoration: InputDecoration(
-                    labelText: 'password'.tr, // MODIFIED
+                    labelText: 'password'.tr, 
                     prefixIcon: const Icon(Icons.lock_outline),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                     filled: true,
-                    fillColor: isDarkMode ? Colors.black.withOpacity(0.3) : Colors.white.withOpacity(0.3),
+                    fillColor: isDarkMode ? Colors.black : Colors.white,
                   ),
                   obscureText: true,
                 ),
@@ -70,7 +70,7 @@ class LoginScreen extends StatelessWidget {
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
                           ),
-                          child: Text('login'.tr, style: const TextStyle(fontSize: 18)), // MODIFIED
+                          child: Text('login'.tr, style: const TextStyle(fontSize: 18)), 
                         ),
                       )),
                 const SizedBox(height: 20),
