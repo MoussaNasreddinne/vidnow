@@ -5,7 +5,6 @@ import 'package:test1/services/auth_service.dart';
 import 'package:test1/widgets/snackbar.dart';
 
 class ForgotPasswordController extends GetxController {
-  // Accesses the authentication service
   final AuthService _authService = locator<AuthService>();
 
   // Controller for the email text field
@@ -16,7 +15,6 @@ class ForgotPasswordController extends GetxController {
 
   @override
   void onClose() {
-    // Disposes the text controller to prevent memory leaks.
     emailController.dispose();
     super.onClose();
   }

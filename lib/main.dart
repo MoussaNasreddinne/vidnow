@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:test1/controllers/ad_controller.dart';
 import 'package:test1/services/ad_service.dart';
 import 'package:test1/widgets/bottom_nav_bar.dart';
@@ -13,7 +14,7 @@ import 'package:test1/services/app_translations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:test1/screens/auth_gate.dart';
-import 'package:test1/controllers/language_controller.dart'; // ADDED: Import LanguageController
+import 'package:test1/controllers/language_controller.dart'; 
 
 void main() async {
   //initializing needed services
@@ -22,6 +23,9 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
+  OneSignal.initialize("592adb5b-5dfb-4603-8da8-859fe3d0ce61");
+  OneSignal.Notifications.requestPermission(true);
   await setupLocator();
   await locator<AdService>().initialize();
   locator<AdService>().loadInterstitialAd();
@@ -38,7 +42,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  // MODIFIED: Get instances for both controllers
+
   final ThemeController themeController = locator<ThemeController>();
   final LanguageController languageController = locator<LanguageController>();
   MyApp({super.key});
@@ -55,7 +59,7 @@ class MyApp extends StatelessWidget {
 
         translations: AppTranslations(),
 
-        // MODIFIED: Locale is now dynamically set by the LanguageController
+        
         locale: languageController.currentLocale.value, 
         fallbackLocale: languageController.currentLocale.value,
 

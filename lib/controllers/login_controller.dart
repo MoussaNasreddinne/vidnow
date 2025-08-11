@@ -4,7 +4,7 @@ import 'package:test1/main.dart';
 import 'package:test1/service_locator.dart';
 import 'package:test1/services/auth_service.dart';
 import 'package:test1/widgets/snackbar.dart';
-import 'package:test1/controllers/theme_controller.dart'; // ADDED: Import ThemeController
+import 'package:test1/controllers/theme_controller.dart';
 
 class LoginController extends GetxController {
   final AuthService _authService = locator<AuthService>();
@@ -33,11 +33,8 @@ class LoginController extends GetxController {
         passwordController.text,
       );
       if (user != null) {
-        // --- MODIFICATION START ---
-        // Explicitly load the user's theme before navigating to prevent race conditions.
         final themeController = locator<ThemeController>();
         await themeController.loadUserTheme(user.uid);
-        // --- MODIFICATION END ---
 
         Get.offAll(() => MainWrapper()); 
       }

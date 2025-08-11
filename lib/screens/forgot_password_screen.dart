@@ -10,7 +10,7 @@ class ForgotPasswordScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final ForgotPasswordController controller = Get.put(ForgotPasswordController());
     final theme = Theme.of(context);
-    final isDarkMode = theme.brightness == Brightness.dark; // ADDED: Check for dark mode
+    final isDarkMode = theme.brightness == Brightness.dark; 
 
     return GradientBackground(
       child: Scaffold(
@@ -39,7 +39,6 @@ class ForgotPasswordScreen extends StatelessWidget {
                     prefixIcon: const Icon(Icons.email_outlined),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                     filled: true,
-                    // MODIFIED: Use a theme-aware semi-transparent color
                     fillColor: isDarkMode ? Colors.black : Colors.white,
                   ),
                   keyboardType: TextInputType.emailAddress,
