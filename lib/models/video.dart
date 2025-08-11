@@ -90,4 +90,17 @@ class Video {
       categoryName: category,
     );
   }
+   Map<String, dynamic> toJson() {
+    return {
+      'ID': id,
+      'Title': title,
+      'Thumbnail': thumbnailUrl,
+      'Duration': duration?.inSeconds,
+      'Description': description,
+      'isPremium': isPremium.toString(),
+      'StreamURL': streamUrl,
+      'CategoryName': categoryName,
+    };
+  }
+
 }

@@ -4,15 +4,16 @@ import 'package:test1/models/video.dart';
 import 'package:test1/services/favorite_service.dart';
 import 'package:test1/service_locator.dart';
 
-// A card widget to display a single video's details
 class VideoCard extends StatelessWidget {
   final Video recommendation;
   final VoidCallback onTap;
+  final Function(bool isCurrentlyFavorite)? onFavoriteToggle;
 
   const VideoCard({
     super.key,
     required this.recommendation,
     required this.onTap,
+    this.onFavoriteToggle,
   });
 
   @override
@@ -25,6 +26,12 @@ class VideoCard extends StatelessWidget {
       tween: Tween(begin: 0.95, end: 1.0),
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeOut,
+      builder: (_, value, child) {
+        return Transform.scale(
+          scale: value,
+          child: child,
+        );
+      },
       child: GestureDetector(
         onTap: onTap,
         child: Container(
@@ -37,8 +44,8 @@ class VideoCard extends StatelessWidget {
             boxShadow: [
               BoxShadow(
                 color: isDarkMode
-                    ? Colors.black
-                    : Colors.grey,
+                    ? Colors.black.withAlpha(100)
+                    : Colors.grey.withAlpha(150),
                 spreadRadius: 2,
                 blurRadius: 5,
                 offset: const Offset(0, 3),
@@ -48,7 +55,7 @@ class VideoCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Hero( // Hero widget for smooth transition animation.
+              Hero(
                 tag: 'video-thumbnail-${recommendation.id}',
                 child: ClipRRect(
                   borderRadius:
@@ -61,7 +68,7 @@ class VideoCard extends StatelessWidget {
                       return Container(
                         height: 180,
                         color: Colors.grey.shade800,
-                        child: Center(
+                        child: const Center(
                           child: Icon(Icons.broken_image,
                               color: Colors.white54, size: 50),
                         ),
@@ -116,7 +123,7 @@ class VideoCard extends StatelessWidget {
                             ),
                           ),
                         if (!recommendation.isPremium) const Spacer(),
-                        Obx(() { // rebuilds the favorite button when its state changes
+                        Obx(() {
                           final bool isFav =
                               favoriteService.isFavorite(recommendation.id);
                           return AnimatedSwitcher(
@@ -137,12 +144,14 @@ class VideoCard extends StatelessWidget {
                                 size: 24,
                               ),
                               onPressed: () {
-                                if (isFav) {
-                                  favoriteService.removeFavorite(
-                                      recommendation.id,
-                                      recommendation.title);
+                                if (onFavoriteToggle != null) {
+                                  onFavoriteToggle!(isFav);
                                 } else {
-                                  favoriteService.addFavorite(recommendation);
+                                  if (isFav) {
+                                    favoriteService.removeFavorite(recommendation);
+                                  } else {
+                                    favoriteService.addFavorite(recommendation);
+                                  }
                                 }
                               },
                             ),
@@ -157,12 +166,6 @@ class VideoCard extends StatelessWidget {
           ),
         ),
       ),
-      builder: (_, value, child) {
-        return Transform.scale(
-          scale: value,
-          child: child,
-        );
-      },
     );
   }
 }

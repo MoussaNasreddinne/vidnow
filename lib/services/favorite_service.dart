@@ -7,67 +7,58 @@ import 'package:test1/widgets/snackbar.dart';
 
 class FavoriteService {
   late SharedPreferences _prefs;
-  final String _favoritesKey = 'favoriteVideos';
-  final RxSet<String> favoriteVideoIds = <String>{}.obs;
+  final String _favoritesKey = 'favoriteVideos_v2';
+  final RxList<Video> favoriteVideos = <Video>[].obs;
 
   Future<void> init() async {
-    await _initPrefs();
-    _loadFavoriteIds();
-  }
-
-  Future<void> _initPrefs() async {
     _prefs = await SharedPreferences.getInstance();
+    _loadFavorites();
   }
 
-  void _loadFavoriteIds() {
-    final String? encodedMap = _prefs.getString(_favoritesKey);
-    if (encodedMap != null) {
-      final List<dynamic> decodedList = json.decode(encodedMap);
-      favoriteVideoIds.assignAll(
-        decodedList.map((id) => id.toString()).toSet(),
+  void _loadFavorites() {
+    final String? encodedList = _prefs.getString(_favoritesKey);
+    if (encodedList != null) {
+      final List<dynamic> decodedList = json.decode(encodedList);
+      favoriteVideos.assignAll(
+        decodedList.map((item) => Video.fromJson(item as Map<String, dynamic>)).toList(),
       );
-      debugPrint(
-        'FavoriteService: Loaded ${favoriteVideoIds.length} favorite IDs.',
-      );
+      debugPrint('FavoriteService: Loaded ${favoriteVideos.length} favorite videos.');
     }
   }
 
-  Future<void> _saveFavoriteIds() async {
-    final String encodedMap = json.encode(favoriteVideoIds.toList());
-    await _prefs.setString(_favoritesKey, encodedMap);
-    debugPrint(
-      'FavoriteService: Saved ${favoriteVideoIds.length} favorite IDs.',
-    );
+  Future<void> _saveFavorites() async {
+    final List<Map<String, dynamic>> encodedList =
+        favoriteVideos.map((video) => video.toJson()).toList();
+    await _prefs.setString(_favoritesKey, json.encode(encodedList));
+    debugPrint('FavoriteService: Saved ${favoriteVideos.length} favorite videos.');
   }
 
   bool isFavorite(String videoId) {
-    return favoriteVideoIds.contains(videoId);
+    return favoriteVideos.any((video) => video.id == videoId);
   }
 
   Future<void> addFavorite(Video video) async {
-    if (!favoriteVideoIds.contains(video.id)) {
-      favoriteVideoIds.add(video.id);
-      await _saveFavoriteIds();
+    if (!isFavorite(video.id)) {
+      favoriteVideos.insert(0, video); 
+      await _saveFavorites();
       CustomSnackbar.showSuccessCustomSnackbar(
-        title: 'Favorites',
-        message: 'Added "${video.title}" to favorites!',
+        title: 'favorites'.tr,
+        message: 'addedToFavorites'.trParams({'videoTitle': video.title}),
       );
-      debugPrint('FavoriteService: Added video ID: ${video.id}');
+      debugPrint('FavoriteService: Added video: ${video.title}');
     }
   }
 
-  Future<void> removeFavorite(String videoId, String videoTitle) async {
-    if (favoriteVideoIds.remove(videoId)) {
-      await _saveFavoriteIds();
+  Future<void> removeFavorite(Video video) async {
+    int index = favoriteVideos.indexWhere((v) => v.id == video.id);
+    if (index != -1) {
+      favoriteVideos.removeAt(index);
+      await _saveFavorites();
       CustomSnackbar.showSuccessCustomSnackbar(
-        title: 'Favorites',
-        message: 'Removed "$videoTitle" from favorites!',
+        title: 'favorites'.tr,
+        message: 'removedFromFavorites'.trParams({'videoTitle': video.title}),
       );
-      debugPrint('FavoriteService: Removed video ID: $videoId');
+      debugPrint('FavoriteService: Removed video: ${video.title}');
     }
-  }
-
-  List<String> getFavoriteVideoIdsList() {
-    return favoriteVideoIds.toList();
   }
 }
