@@ -1,3 +1,5 @@
+// lib/controllers/rec_controller.dart
+
 import 'package:get/get.dart';
 import 'package:test1/models/category.dart';
 import 'package:test1/services/Api_service.dart';
@@ -14,9 +16,9 @@ class RecommendationController extends GetxController {
   RecommendationController() {
     fetchCategories();
   }
+
   
-  // Fetches video categories from the API.
-  void fetchCategories() async {
+  Future<void> fetchCategories() async {
     try {
       isLoading(true);
       List<Category> fetchedCategories = await _apiService.fetchCategories();
@@ -32,23 +34,30 @@ class RecommendationController extends GetxController {
     }
   }
 
-  // Computed property for category names
+  
+  Future<void> refreshCategories() async {
+    try {
+      List<Category> fetchedCategories = await _apiService.fetchCategories();
+      _allCategories.assignAll(fetchedCategories);
+    } catch (e) {
+      CustomSnackbar.showErrorCustomSnackbar(
+        title: 'Error',
+        message: 'Failed to refresh videos',
+      );
+    }
+  }
+
   List<String> get categoryNames {
-    // "All" as the first category
     return ['All', ..._allCategories.map((c) => c.name).toList()];
   }
 
-  // Computed property for the currently displayed videos
   List<Video> get currentRecommendations {
     if (isLoading.value || _allCategories.isEmpty) {
       return [];
     }
-    // If "All" is selected (index 0)
     if (selectedCategoryIndex.value == 0) {
-      // Return a single flat list of all videos from all categories
       return _allCategories.expand((category) => category.videos).toList();
     }
-    // Otherwise, return videos for the selected category
     final categoryIndex = selectedCategoryIndex.value - 1;
     if (categoryIndex >= 0 && categoryIndex < _allCategories.length) {
       return _allCategories[categoryIndex].videos;

@@ -1,29 +1,26 @@
+// lib/screens/home.dart
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:test1/controllers/button_controller.dart';
 import 'package:test1/controllers/rec_controller.dart';
 import 'package:test1/services/Api_service.dart';
-import 'package:test1/screens/videostream.dart';
 import 'package:test1/widgets/Category_chip.dart';
 import 'package:test1/widgets/gradient_background.dart';
 import 'package:test1/widgets/vidnow_appbar.dart';
 import 'package:test1/widgets/video_card.dart';
 import 'package:test1/widgets/loading_indicator.dart';
 import 'package:test1/service_locator.dart';
-import 'package:test1/widgets/snackbar.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
-
   @override
   Widget build(BuildContext context) {
     final ButtonController buttonController = locator<ButtonController>();
     final RecommendationController recController =
         locator<RecommendationController>();
     final VideoApiService apiService = locator<VideoApiService>();
-
     return Obx(() {
-      // rebuilds the entire screen based on the recommendation controller's state
       if (recController.isLoading.value &&
           recController.currentRecommendations.isEmpty) {
         return const LoadingIndicator();
@@ -38,7 +35,6 @@ class Home extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Horizontal list of category filter chips
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Padding(
@@ -46,9 +42,7 @@ class Home extends StatelessWidget {
                     child: Row(
                       children: recController.categoryNames.map((name) {
                         final index = recController.categoryNames.indexOf(name);
-
                         final displayName = name == 'All' ? 'all'.tr : name;
-
                         return CategoryChip(
                           name: displayName,
                           isSelected:
@@ -63,9 +57,7 @@ class Home extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 10),
-                if (recController.isLoading.value)
-                  const Expanded(child: Center(child: LoadingIndicator()))
-                else if (recController.currentRecommendations.isEmpty &&
+                if (recController.currentRecommendations.isEmpty &&
                     !recController.isLoading.value)
                   Expanded(
                     child: Center(
@@ -77,47 +69,20 @@ class Home extends StatelessWidget {
                   )
                 else
                   Expanded(
-                    child: ListView.builder(
-                      itemCount: recController.currentRecommendations.length,
-                      itemBuilder: (context, index) {
-                        final video =
-                            recController.currentRecommendations[index];
-                        return VideoCard(
-                          recommendation: video,
-                          onTap: () async {
-                            String finalVideoUrl = video.streamUrl ?? '';
-                            if (finalVideoUrl.isEmpty) {
-                              try {
-                                Get.dialog(
-                                  const Center(
-                                    child: CircularProgressIndicator(
-                                      color: Colors.red,
-                                    ),
-                                  ),
-                                  barrierDismissible: false,
-                                );
-                                finalVideoUrl = await apiService.getStreamUrl(
-                                  video.id,
-                                );
-                                Get.back();
-                              } catch (e) {
-                                Get.back();
-                                CustomSnackbar.showErrorCustomSnackbar(
-                                  title: 'error'.tr,
-                                  message: 'failedToGetVideoStream'.trParams({
-                                    'error': e.toString().split(':')[0],
-                                  }),
-                                );
-                                debugPrint('Error getting stream URL: $e');
-                                return;
-                              }
-                            }
-                            Get.to(
-                              () => VideoPlayerScreen(videoUrl: finalVideoUrl),
-                            );
-                          },
-                        );
-                      },
+                    child: RefreshIndicator(
+                      onRefresh: recController.refreshCategories,
+                      color: Theme.of(context).primaryColor,
+                      child: ListView.builder(
+                        itemCount: recController.currentRecommendations.length,
+                        itemBuilder: (context, index) {
+                          final video =
+                              recController.currentRecommendations[index];
+                          return VideoCard(
+                            recommendation: video,
+                            onTap: () => apiService.playVideo(video),
+                          );
+                        },
+                      ),
                     ),
                   ),
               ],

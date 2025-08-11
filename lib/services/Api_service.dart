@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:test1/models/category.dart';
 import 'package:test1/models/video.dart';
 import 'package:http/http.dart' as http;
+import 'package:test1/screens/videostream.dart';
+import 'package:test1/widgets/snackbar.dart';
+import 'package:get/get.dart';
 
 class VideoApiService {
   final String _baseUrl;
@@ -84,5 +87,31 @@ class VideoApiService {
       debugPrint('Error fetching live channels: $e');
       throw Exception('Error fetching live channels: $e');
     }
+  }
+  Future<void> playVideo(Video video) async {
+    String finalVideoUrl = video.streamUrl ?? '';
+
+   
+    if (finalVideoUrl.isEmpty) {
+      
+      Get.dialog(
+        const Center(child: CircularProgressIndicator(color: Colors.red)),
+        barrierDismissible: false,
+      );
+
+      try {
+        finalVideoUrl = await getStreamUrl(video.id);
+        Get.back(); 
+      } catch (e) {
+        Get.back(); 
+        CustomSnackbar.showErrorCustomSnackbar(
+          title: 'error'.tr,
+          message: 'failedToGetVideoStream'
+              .trParams({'error': e.toString().split(':')[0]}),
+        );
+        return; 
+      }
+    }
+    Get.to(() => VideoPlayerScreen(videoUrl: finalVideoUrl));
   }
 }
