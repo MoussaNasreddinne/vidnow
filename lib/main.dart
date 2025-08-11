@@ -15,6 +15,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:test1/screens/auth_gate.dart';
 import 'package:test1/controllers/language_controller.dart'; 
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 void main() async {
   //initializing needed services
@@ -45,6 +46,7 @@ class MyApp extends StatelessWidget {
 
   final ThemeController themeController = locator<ThemeController>();
   final LanguageController languageController = locator<LanguageController>();
+  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   MyApp({super.key});
 
   @override
@@ -62,6 +64,10 @@ class MyApp extends StatelessWidget {
         
         locale: languageController.currentLocale.value, 
         fallbackLocale: languageController.currentLocale.value,
+
+        navigatorObservers: [
+          FirebaseAnalyticsObserver(analytics: analytics),
+        ],
 
         home: AuthGate(),
       ),

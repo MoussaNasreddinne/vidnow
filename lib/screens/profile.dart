@@ -43,8 +43,8 @@ class ProfilePage extends StatelessWidget {
                     padding: const EdgeInsets.all(8),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(100),
-                      child: Image.asset(
-                        "assets/images/profile.jpg",
+                      child: Image.network(
+                        "https://i.imgur.com/EbocMzS.jpeg",
                         fit: BoxFit.cover,
                         height: 150,
                         width: 150,

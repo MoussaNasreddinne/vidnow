@@ -5,6 +5,7 @@ import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 import 'package:test1/services/ad_service.dart';
 import 'package:test1/service_locator.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 class VideoPlayerScreen extends StatefulWidget {
   final String videoUrl;
@@ -119,6 +120,12 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
       debugPrint(
         'VideoPlayerScreen: ChewieController created. Player should be ready.',
       );
+      await FirebaseAnalytics.instance.logEvent(
+      name: 'play_video',
+      parameters: <String, dynamic>{
+        'video_url': widget.videoUrl,
+      },
+    );
       _fadeController.forward();
 
       setState(() {
