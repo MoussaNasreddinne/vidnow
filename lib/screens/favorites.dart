@@ -8,6 +8,7 @@ import 'package:test1/widgets/vidnow_appbar.dart';
 import 'package:test1/widgets/video_card.dart';
 import 'package:test1/controllers/favorites_controller.dart';
 import 'package:test1/service_locator.dart';
+import 'package:test1/widgets/loading_indicator.dart';
 
 class Favorites extends StatelessWidget {
   const Favorites({super.key});
@@ -24,9 +25,7 @@ class Favorites extends StatelessWidget {
         body: Obx(() {
           if (controller.isLoadingFavorites.value &&
               controller.favoriteVideos.isEmpty) {
-            return const Center(
-              child: CircularProgressIndicator(color: Colors.red),
-            );
+            return const LoadingIndicator();
           }
 
           if (controller.favoriteVideos.isEmpty) {
