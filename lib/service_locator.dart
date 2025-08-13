@@ -17,7 +17,7 @@ import 'package:test1/controllers/login_controller.dart';
 import 'package:test1/controllers/auth_controller.dart';
 import 'package:test1/controllers/forgot_password_controller.dart';
 import 'package:test1/services/remote_config_service.dart';
-
+import 'package:test1/controllers/search_controller.dart'; 
 
 GetIt locator = GetIt.instance;
 
@@ -63,5 +63,6 @@ Future<void> setupLocator() async {
   //locator.registerLazySingleton(() => ThemeController());
   //locator.registerLazySingleton(() => LanguageController());
   locator.registerLazySingleton(() => AuthController());
+  locator.registerLazySingleton(() => SearchController());
   
 }

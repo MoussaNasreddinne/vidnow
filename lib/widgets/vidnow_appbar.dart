@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:test1/controllers/theme_controller.dart';
+import 'package:test1/screens/search_screen.dart';
 import 'package:test1/service_locator.dart';
 
 class VidNowAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   final Size preferredSize = const Size.fromHeight(40);
-
   const VidNowAppBar({super.key});
 
   @override
   Widget build(BuildContext context) {
     final ThemeController themeController = locator<ThemeController>();
     return AppBar(
-      leading: PopupMenuButton<Locale>( // Language selection popup menu
+      leading: PopupMenuButton<Locale>(
         icon: Icon(
           Icons.language,
           color: Theme.of(context).appBarTheme.iconTheme?.color,
@@ -30,7 +30,6 @@ class VidNowAppBar extends StatelessWidget implements PreferredSizeWidget {
             value: const Locale('ar'),
             child: Text('languageArabic'.tr),
           ),
-          
           PopupMenuItem<Locale>(
             value: const Locale('fr'),
             child: Text('French'.tr),
@@ -54,7 +53,17 @@ class VidNowAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
       actions: [
-        Obx( // Theme toggle button
+        IconButton(
+          icon: Icon(
+            Icons.search,
+            color: Theme.of(context).appBarTheme.iconTheme?.color,
+          ),
+          onPressed: () {
+            Get.to(() => const SearchScreen());
+          },
+        ),
+
+        Obx(
           () => IconButton(
             icon: Icon(
               themeController.isDarkMode.value
