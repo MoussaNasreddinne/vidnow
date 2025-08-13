@@ -4,11 +4,14 @@ import 'package:test1/models/category.dart';
 import 'package:test1/models/video.dart';
 import 'package:http/http.dart' as http;
 import 'package:test1/screens/videostream.dart';
+import 'package:test1/service_locator.dart';
 import 'package:test1/widgets/snackbar.dart';
 import 'package:get/get.dart';
+import 'package:test1/controllers/auth_controller.dart';
 
 class VideoApiService {
   final String _baseUrl;
+      final AuthController authController = locator<AuthController>();
 
   VideoApiService({required String baseUrl}) : _baseUrl = baseUrl;
 
@@ -100,6 +103,13 @@ class VideoApiService {
   }
 
   Future<void> playVideo(Video video) async {
+        if (video.isPremium && !authController.isPremiumUser.value) {
+      CustomSnackbar.showErrorCustomSnackbar(
+        title: 'premiumContent'.tr,
+        message: 'premiumRequired'.tr,
+      );
+      return;
+    }
     String finalVideoUrl = video.streamUrl ?? '';
 
     if (finalVideoUrl.isEmpty) {

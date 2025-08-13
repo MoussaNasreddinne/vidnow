@@ -7,11 +7,14 @@ import 'package:test1/widgets/video_card.dart';
 import 'package:test1/widgets/loading_indicator.dart';
 import 'package:test1/screens/videostream.dart';
 import 'package:test1/widgets/snackbar.dart';
+import 'package:test1/controllers/auth_controller.dart';
+import 'package:test1/service_locator.dart';
 
 class LivestreamPage extends StatelessWidget {
   const LivestreamPage({super.key});
   @override
   Widget build(BuildContext context) {
+    final AuthController authController = locator<AuthController>();
     final LivestreamController livestreamController = Get.put(
       LivestreamController(),
     );
@@ -63,6 +66,13 @@ class LivestreamPage extends StatelessWidget {
                         return VideoCard(
                           recommendation: liveChannel,
                           onTap: () {
+                            if (liveChannel.isPremium && !authController.isPremiumUser.value) {
+                              CustomSnackbar.showErrorCustomSnackbar(
+                                title: 'premiumContent'.tr,
+                                message: 'premiumRequired'.tr,
+                              );
+                              return;
+                            }
                             if (liveChannel.streamUrl != null &&
                                 liveChannel.streamUrl!.isNotEmpty) {
                               Get.to(

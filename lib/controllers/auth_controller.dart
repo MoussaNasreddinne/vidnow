@@ -11,6 +11,7 @@ class AuthController extends GetxController {
 
   final Rxn<User> user = Rxn<User>();
   final RxBool isAuthCheckComplete = false.obs;
+  final RxBool isPremiumUser = false.obs; 
 
   @override
   void onInit() {

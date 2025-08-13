@@ -13,6 +13,18 @@ class AuthService {
   Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
   User? get currentUser => _firebaseAuth.currentUser;
 
+
+    Future<Map<String, dynamic>?> getUserProfile(String uid) async {
+    try {
+      final doc = await _firestore.collection('users').doc(uid).get();
+      return doc.data();
+    } catch (e) {
+      debugPrint('AuthService: Error fetching user profile: $e');
+      return null;
+    }
+  }
+
+
 Future<User?> signUpWithEmailAndPassword(String email, String password, String username) async {
     try {
       final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
