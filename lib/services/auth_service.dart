@@ -13,14 +13,23 @@ class AuthService {
   Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
   User? get currentUser => _firebaseAuth.currentUser;
 
-  Future<User?> signUpWithEmailAndPassword(String email, String password) async {
+Future<User?> signUpWithEmailAndPassword(String email, String password, String username) async {
     try {
       final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email.trim(),
         password: password,
       );
-      
-      return userCredential.user;
+      final user = userCredential.user;
+      if (user != null) {
+        // Create a new document for the user with the uid
+        await _firestore.collection('users').doc(user.uid).set({
+          'username': username,
+          'email': email.trim(),
+          'createdAt': FieldValue.serverTimestamp(),
+          'isPremium': false,
+        });
+      }
+      return user;
     } on FirebaseAuthException catch (e) {
       CustomSnackbar.showErrorCustomSnackbar(
         title: 'Sign-Up Error',
@@ -28,6 +37,36 @@ class AuthService {
       );
       return null;
     }
+  }
+
+  Future<void> _createUserDocument(User user) async {
+    final docRef = _firestore.collection('users').doc(user.uid);
+
+    // Ensure createdAt is set only once; update updatedAt on every write
+    await _firestore.runTransaction((tx) async {
+      final snapshot = await tx.get(docRef);
+
+      final data = <String, dynamic>{
+        'uid': user.uid,
+        'email': user.email ?? '',
+        'displayName': user.displayName ?? '',
+        'updatedAt': FieldValue.serverTimestamp(),
+      };
+
+      if (!snapshot.exists) {
+        data['createdAt'] = FieldValue.serverTimestamp();
+      }
+
+      tx.set(docRef, data, SetOptions(merge: true));
+    }).catchError((e) async {
+      // Roll back the auth user if Firestore write fails, to keep state consistent
+      try {
+        await user.delete();
+      } catch (_) {
+        // Ignore if delete not allowed (e.g., requires recent login)
+      }
+      throw e;
+    });
   }
 
   Future<User?> signInWithEmailAndPassword(String email, String password) async {
@@ -65,7 +104,6 @@ class AuthService {
     try {
       if (locator.isRegistered<LoginController>()) {
         locator<LoginController>().clearFields();
-        print('fields cleared');
       }
       await _firebaseAuth.signOut();
     } on FirebaseAuthException catch (e) {

@@ -120,12 +120,13 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
       debugPrint(
         'VideoPlayerScreen: ChewieController created. Player should be ready.',
       );
-      await FirebaseAnalytics.instance.logEvent(
-      name: 'play_video',
-      parameters: <String, dynamic>{
-        'video_url': widget.videoUrl,
-      },
-    );
+      FirebaseAnalytics.instance.logEvent(
+        name: 'some_event_name',
+        parameters: <String, Object>{
+          'parameter_1': 'some value',
+          'parameter_2': 123,
+        },
+      );
       _fadeController.forward();
 
       setState(() {

@@ -16,7 +16,7 @@ class SignUpScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: Text('createAccount'.tr), 
+          title: Text('createAccount'.tr),
           backgroundColor: Colors.transparent,
           elevation: 0,
         ),
@@ -27,9 +27,21 @@ class SignUpScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 TextField(
+                  controller: controller.usernameController,
+                  decoration: InputDecoration(
+                    labelText: 'Username',
+                    prefixIcon: const Icon(Icons.person_outline),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    filled: true,
+                    fillColor: isDarkMode ? Colors.black : Colors.white,
+                  ),
+                  keyboardType: TextInputType.text,
+                ),
+                const SizedBox(height: 16),
+                TextField(
                   controller: controller.emailController,
                   decoration: InputDecoration(
-                    labelText: 'email'.tr, 
+                    labelText: 'email'.tr,
                     prefixIcon: const Icon(Icons.email_outlined),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                     filled: true,
@@ -41,7 +53,7 @@ class SignUpScreen extends StatelessWidget {
                 TextField(
                   controller: controller.passwordController,
                   decoration: InputDecoration(
-                    labelText: 'password'.tr, 
+                    labelText: 'password'.tr,
                     prefixIcon: const Icon(Icons.lock_outline),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                     filled: true,
@@ -59,7 +71,7 @@ class SignUpScreen extends StatelessWidget {
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
                           ),
-                          child: Text('signUp'.tr, style: const TextStyle(fontSize: 18)), 
+                          child: Text('signUp'.tr, style: const TextStyle(fontSize: 18)),
                         ),
                       )),
               ],

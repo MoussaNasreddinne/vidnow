@@ -11,18 +11,21 @@ class LoginController extends GetxController {
 
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final usernameController = TextEditingController(); 
   var isLoading = false.obs;
 
   @override
   void onClose() {
     emailController.dispose();
     passwordController.dispose();
+    usernameController.dispose(); 
     super.onClose();
   }
 
   void clearFields() {
     emailController.clear();
     passwordController.clear();
+    usernameController.clear(); 
   }
 
   Future<void> login() async {
@@ -44,11 +47,20 @@ class LoginController extends GetxController {
   }
 
   Future<void> signUp() async {
+    if (usernameController.text.trim().isEmpty) {
+      CustomSnackbar.showErrorCustomSnackbar(
+        title: 'Error',
+        message: 'Please enter a username',
+      );
+      return;
+    }
+
     isLoading(true);
     try {
       final user = await _authService.signUpWithEmailAndPassword(
         emailController.text,
         passwordController.text,
+        usernameController.text, 
       );
       if (user != null) {
         CustomSnackbar.showSuccessCustomSnackbar(

@@ -13,10 +13,10 @@ environment:
 dependencies:
   
   flutter_inappwebview: ^6.0.0 
-  firebase_auth:
+  firebase_auth: ^5.1.0
   cloud_firestore:
   get: ^4.6.5
-  firebase_core: ^2.24.2
+  firebase_core: ^3.1.0
   google_mobile_ads:
   video_player: ^2.8.0
   http: ^1.4.0
@@ -28,8 +28,8 @@ dependencies:
 
   onesignal_flutter: ^5.3.4
   cupertino_icons: ^1.0.8
-  firebase_remote_config: ^4.4.7
-  firebase_analytics: ^10.10.7
+  firebase_remote_config: ^5.0.1
+  firebase_analytics: ^11.0.1
 
 dev_dependencies:
   flutter_test:

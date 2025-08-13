@@ -12,13 +12,13 @@ class RemoteConfigService {
     final remoteConfig = FirebaseRemoteConfig.instance;
 
     
-    await remoteConfig.setDefaults({
+    await remoteConfig.setDefaults(<String, Object>{
       'api_base_url': 'https://d2p4ou0is754xb.cloudfront.net',
       'default_theme_is_dark': true,
       'default_language_code': 'en',
-      'android_banner_ad_unit_id': 'ca-app-pub-3940256099942544/6300978111', // Test ID
-      'android_interstitial_ad_unit_id': 'ca-app-pub-3940256099942544/1033173712', // Test ID
-    });
+      'android_banner_ad_unit_id': 'ca-app-pub-3940256099942544/6300978111', 
+      'android_interstitial_ad_unit_id': 'ca-app-pub-3940256099942544/1033173712',
+});
 
    
     await remoteConfig.setConfigSettings(RemoteConfigSettings(
