@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:test1/models/video.dart';
 import 'package:test1/widgets/snackbar.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
@@ -9,7 +10,9 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 
 class VideoPlayerScreen extends StatefulWidget {
   final String videoUrl;
-  const VideoPlayerScreen({super.key, required this.videoUrl});
+  final Video video; 
+  const VideoPlayerScreen(
+      {super.key, required this.video, required this.videoUrl});
 
   @override
   State<VideoPlayerScreen> createState() => _VideoPlayerScreenState();
@@ -20,7 +23,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
   VideoPlayerController? _videoPlayerController;
   ChewieController? _chewieController;
   bool _isLoading = true;
-
   String _statusKey = 'videoPlayerInitializing';
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
@@ -45,7 +47,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
     debugPrint(
       'VideoPlayerScreen: _initializePlayer called. URL: "${widget.videoUrl}"',
     );
-
     try {
       String cleanUrl = widget.videoUrl.replaceAll('"', '').trim();
       _videoPlayerController = VideoPlayerController.networkUrl(
@@ -120,13 +121,19 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
       debugPrint(
         'VideoPlayerScreen: ChewieController created. Player should be ready.',
       );
+      final video = widget.video;
       FirebaseAnalytics.instance.logEvent(
-        name: 'some_event_name',
-        parameters: <String, Object>{
-          'parameter_1': 'some value',
-          'parameter_2': 123,
+        name: 'video_play',
+        parameters: {
+          'video_id': video.id,
+          'video_title': video.title.length > 100
+              ? video.title.substring(0, 100)
+              : video.title,
+          'video_category': video.categoryName ?? 'none',
+          'is_premium': video.isPremium,
         },
       );
+
       _fadeController.forward();
 
       setState(() {
@@ -142,7 +149,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
           'errorMessage': e.toString(),
         });
       });
-
       CustomSnackbar.showErrorCustomSnackbar(
         title: 'playbackError'.tr,
         message: _statusKey,
@@ -214,12 +220,11 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
                 )
               : FadeTransition(
                   opacity: _fadeAnimation,
-                  child:
-                      _chewieController != null &&
+                  child: _chewieController != null &&
                           _videoPlayerController != null &&
                           _videoPlayerController!.value.isInitialized
                       ? Hero(
-                          tag: 'video-thumbnail-${widget.videoUrl}',
+                          tag: 'video-thumbnail-${widget.video.id}',
                           child: Chewie(controller: _chewieController!),
                         )
                       : Column(

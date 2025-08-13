@@ -10,7 +10,6 @@ import 'package:test1/widgets/snackbar.dart';
 
 class LivestreamPage extends StatelessWidget {
   const LivestreamPage({super.key});
-
   @override
   Widget build(BuildContext context) {
     final LivestreamController livestreamController = Get.put(
@@ -68,6 +67,7 @@ class LivestreamPage extends StatelessWidget {
                                 liveChannel.streamUrl!.isNotEmpty) {
                               Get.to(
                                 () => VideoPlayerScreen(
+                                  video: liveChannel,
                                   videoUrl: liveChannel.streamUrl!,
                                 ),
                               );

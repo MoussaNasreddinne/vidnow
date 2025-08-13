@@ -13,8 +13,9 @@ class VideoApiService {
   VideoApiService({required String baseUrl}) : _baseUrl = baseUrl;
 
   Future<List<Category>> fetchCategories() async {
-    final response =
-        await http.get(Uri.parse('$_baseUrl/av_getmobibasevideos?language=en'));
+    final response = await http.get(
+      Uri.parse('$_baseUrl/av_getmobibasevideos?language=en'),
+    );
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseData = jsonDecode(response.body);
       if (responseData['Content'] is List &&
@@ -23,8 +24,10 @@ class VideoApiService {
         if (outerContent.first['Videos'] is List) {
           final List<dynamic> categoriesJson = outerContent.first['Videos'];
           return categoriesJson
-              .map((categoryJson) =>
-                  Category.fromJson(categoryJson as Map<String, dynamic>))
+              .map(
+                (categoryJson) =>
+                    Category.fromJson(categoryJson as Map<String, dynamic>),
+              )
               .toList();
         }
       }
@@ -40,14 +43,18 @@ class VideoApiService {
   }
 
   Future<String> getStreamUrl(String videoId) async {
-    final response =
-        await http.get(Uri.parse('$_baseUrl/av_getstreamvideo?id=$videoId'));
+    final response = await http.get(
+      Uri.parse('$_baseUrl/av_getstreamvideo?id=$videoId'),
+    );
     if (response.statusCode == 200) {
-      debugPrint('Raw API Response for stream URL ($videoId): ${response.body}');
+      debugPrint(
+        'Raw API Response for stream URL ($videoId): ${response.body}',
+      );
       return response.body;
     } else {
       debugPrint(
-          'Failed to load stream URL: Status Code ${response.statusCode}, Body: ${response.body}');
+        'Failed to load stream URL: Status Code ${response.statusCode}, Body: ${response.body}',
+      );
       throw Exception('Failed to load stream URL');
     }
   }
@@ -66,7 +73,8 @@ class VideoApiService {
             return Video.fromJson({
               'ID': json['ChannelId']?.toString() ?? '',
               'Title': json['ChannelName'] ?? 'Unknown Channel',
-              'Thumbnail': json['ChannelThumbnail'] ??
+              'Thumbnail':
+                  json['ChannelThumbnail'] ??
                   'https://placehold.co/400x225/333333/FFFFFF?text=Live',
               'StreamURL': json['ChannelURL']?.replaceAll('"', '').trim() ?? '',
               'Description': json['ChannelDescription'] ?? '',
@@ -75,12 +83,14 @@ class VideoApiService {
           }).toList();
         } else {
           debugPrint(
-              'API Response for live channels does not contain expected "Channels" structure.');
+            'API Response for live channels does not contain expected "Channels" structure.',
+          );
           return [];
         }
       } else {
         debugPrint(
-            'Failed to load live channels: ${response.statusCode}, Body: ${response.body}');
+          'Failed to load live channels: ${response.statusCode}, Body: ${response.body}',
+        );
         throw Exception('Failed to load live channels: ${response.statusCode}');
       }
     } catch (e) {
@@ -88,30 +98,29 @@ class VideoApiService {
       throw Exception('Error fetching live channels: $e');
     }
   }
+
   Future<void> playVideo(Video video) async {
     String finalVideoUrl = video.streamUrl ?? '';
 
-   
     if (finalVideoUrl.isEmpty) {
-      
       Get.dialog(
         const Center(child: CircularProgressIndicator(color: Colors.red)),
         barrierDismissible: false,
       );
-
       try {
         finalVideoUrl = await getStreamUrl(video.id);
-        Get.back(); 
+        Get.back();
       } catch (e) {
-        Get.back(); 
+        Get.back();
         CustomSnackbar.showErrorCustomSnackbar(
           title: 'error'.tr,
-          message: 'failedToGetVideoStream'
-              .trParams({'error': e.toString().split(':')[0]}),
+          message: 'failedToGetVideoStream'.trParams({
+            'error': e.toString().split(':')[0],
+          }),
         );
-        return; 
+        return;
       }
     }
-    Get.to(() => VideoPlayerScreen(videoUrl: finalVideoUrl));
+    Get.to(() => VideoPlayerScreen(video: video, videoUrl: finalVideoUrl));
   }
 }

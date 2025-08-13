@@ -39,36 +39,6 @@ Future<User?> signUpWithEmailAndPassword(String email, String password, String u
     }
   }
 
-  Future<void> _createUserDocument(User user) async {
-    final docRef = _firestore.collection('users').doc(user.uid);
-
-    // Ensure createdAt is set only once; update updatedAt on every write
-    await _firestore.runTransaction((tx) async {
-      final snapshot = await tx.get(docRef);
-
-      final data = <String, dynamic>{
-        'uid': user.uid,
-        'email': user.email ?? '',
-        'displayName': user.displayName ?? '',
-        'updatedAt': FieldValue.serverTimestamp(),
-      };
-
-      if (!snapshot.exists) {
-        data['createdAt'] = FieldValue.serverTimestamp();
-      }
-
-      tx.set(docRef, data, SetOptions(merge: true));
-    }).catchError((e) async {
-      // Roll back the auth user if Firestore write fails, to keep state consistent
-      try {
-        await user.delete();
-      } catch (_) {
-        // Ignore if delete not allowed (e.g., requires recent login)
-      }
-      throw e;
-    });
-  }
-
   Future<User?> signInWithEmailAndPassword(String email, String password) async {
     try {
       final userCredential = await _firebaseAuth.signInWithEmailAndPassword(
