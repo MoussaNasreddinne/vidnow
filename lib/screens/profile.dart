@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:test1/controllers/auth_controller.dart';
 import 'package:test1/widgets/animated_fade_in.dart';
 import 'package:test1/widgets/gradient_background.dart';
+import 'package:test1/widgets/profile_content.dart';
 import 'package:test1/widgets/vidnow_appbar.dart';
 import 'package:test1/service_locator.dart';
 import 'package:test1/services/auth_service.dart';
-import 'package:test1/widgets/profile_option.dart';
 
 class ProfilePage extends StatelessWidget {
   ProfilePage({super.key});
+
+  final AuthController authController = locator<AuthController>();
+  final AuthService authService = locator<AuthService>();
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
+    final user = authController.user.value;
 
     return GradientBackground(
       child: Scaffold(
@@ -21,97 +26,34 @@ class ProfilePage extends StatelessWidget {
         appBar: const VidNowAppBar(),
         body: SingleChildScrollView(
           child: AnimatedFadeIn(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 35),
-                  child: Center(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: theme.primaryColor,
-                        borderRadius: BorderRadius.circular(100),
-                        boxShadow: [
-                          BoxShadow(
-                            color: isDarkMode
-                                ? Colors.black.withAlpha(179)
-                                : Colors.grey.withAlpha(128),
-                            spreadRadius: 3,
-                            blurRadius: 10,
-                            offset: const Offset(0, 5),
-                          )
-                        ],
-                      ),
-                      padding: const EdgeInsets.all(8),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(100),
-                        child: Image.network(
-                          "https://i.imgur.com/EbocMzS.jpeg",
-                          fit: BoxFit.cover,
-                          height: 150,
-                          width: 150,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  'profileUserName'.tr,
-                  style: theme.textTheme.titleLarge?.copyWith(fontSize: 24),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  'profileUserEmail'.tr,
-                  style: theme.textTheme.bodyMedium?.copyWith(fontSize: 16),
-                ),
-                const SizedBox(height: 30),
-                Card(
-                  margin: EdgeInsets.symmetric(
-                      horizontal: MediaQuery.of(context).size.width * 0.075),
-                  clipBehavior: Clip.antiAlias,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Column(
-                    children: [
-                      ProfileOption(
-                        icon: Icons.person_outline,
-                        title: 'editProfile'.tr,
-                        onTap: () {},
-                      ),
-                      ProfileOption(
-                        icon: Icons.settings_outlined,
-                        title: 'settings'.tr,
-                        onTap: () {},
-                      ),
-                      ProfileOption(
-                        icon: Icons.history_outlined,
-                        title: 'watchHistory'.tr,
-                        onTap: () {},
-                      ),
-                      ProfileOption(
-                        icon: Icons.notifications_outlined,
-                        title: 'notifications'.tr,
-                        onTap: () {},
-                      ),
-                      ProfileOption(
-                        icon: Icons.help_outline,
-                        title: 'helpAndSupport'.tr,
-                        onTap: () {},
-                      ),
-                      ProfileOption(
-                        icon: Icons.logout,
-                        title: 'logout'.tr,
-                        onTap: () {
-                          locator<AuthService>().signOut();
-                        },
-                        isLast: true, 
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 30),
-              ],
+            child: FutureBuilder<Map<String, dynamic>?>(
+              future: user != null ? authService.getUserProfile(user.uid) : Future.value(null),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(heightFactor: 15, child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError || !snapshot.hasData || snapshot.data == null) {
+                  return ProfileContent(
+                    theme: theme,
+                    isDarkMode: isDarkMode,
+                    username: 'Error Loading Profile',
+                    email: 'Please try again later',
+                    imageUrl: "https://i.imgur.com/EbocMzS.jpeg",
+                  );
+                }
+
+                final userData = snapshot.data!;
+                final profileImageUrl = user?.photoURL ?? userData['photoUrl'] ?? "https://i.imgur.com/EbocMzS.jpeg";
+
+                return ProfileContent(
+                  theme: theme,
+                  isDarkMode: isDarkMode,
+                  username: userData['username'] ?? 'No Username',
+                  email: userData['email'] ?? 'No Email',
+                  imageUrl: profileImageUrl,
+                );
+              },
             ),
           ),
         ),
