@@ -15,8 +15,7 @@ class AuthService {
   Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
   User? get currentUser => _firebaseAuth.currentUser;
 
-
-    Future<Map<String, dynamic>?> getUserProfile(String uid) async {
+  Future<Map<String, dynamic>?> getUserProfile(String uid) async {
     try {
       final doc = await _firestore.collection('users').doc(uid).get();
       return doc.data();
@@ -26,6 +25,26 @@ class AuthService {
     }
   }
 
+  Future<void> updateUserProfile({required String uid, required String username, String? newPassword}) async {
+    try {
+      await _firestore.collection('users').doc(uid).update({'username': username});
+
+      if (newPassword != null && newPassword.isNotEmpty) {
+        await currentUser?.updatePassword(newPassword);
+      }
+
+      CustomSnackbar.showSuccessCustomSnackbar(
+        title: 'Success',
+        message: 'Profile updated successfully!',
+      );
+    } on FirebaseAuthException catch (e) {
+      CustomSnackbar.showErrorCustomSnackbar(
+        title: 'Update Error',
+        message: e.message ?? 'Could not update profile.',
+      );
+      rethrow;
+    }
+  }
 
  Future<User?> signInWithGoogle() async {
     try {
@@ -46,7 +65,7 @@ class AuthService {
 
       if (user != null) {
         final doc = await _firestore.collection('users').doc(user.uid).get();
-        
+
         if (!doc.exists) {
           await _firestore.collection('users').doc(user.uid).set({
             'username': user.displayName ?? 'Google User',
@@ -139,7 +158,6 @@ Future<User?> signUpWithEmailAndPassword(String email, String password, String u
       await _googleSignIn.signOut();
       await _firebaseAuth.signOut();
       print('sign out success');
-      
     } on FirebaseAuthException catch (e) {
       CustomSnackbar.showErrorCustomSnackbar(
         title: 'Sign-Out Error',
@@ -148,4 +166,3 @@ Future<User?> signUpWithEmailAndPassword(String email, String password, String u
     }
   }
 }
-

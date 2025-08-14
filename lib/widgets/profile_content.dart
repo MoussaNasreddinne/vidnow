@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:test1/screens/edit_profile_screen.dart';
 import 'package:test1/service_locator.dart';
 import 'package:test1/services/auth_service.dart';
 import 'package:test1/widgets/profile_option.dart';
@@ -81,7 +82,9 @@ class ProfileContent extends StatelessWidget {
               ProfileOption(
                 icon: Icons.person_outline,
                 title: 'editProfile'.tr,
-                onTap: () {},
+                onTap: () {
+                  Get.to(() => const EditProfileScreen());
+                },
               ),
               ProfileOption(
                 icon: Icons.settings_outlined,

@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:test1/controllers/ad_controller.dart';
 import 'package:test1/controllers/button_controller.dart';
+import 'package:test1/controllers/edit_profile_controller.dart';
 import 'package:test1/controllers/favorites_controller.dart';
 import 'package:test1/controllers/livestream_controller.dart';
 import 'package:test1/controllers/nav_controller.dart';
@@ -41,6 +42,7 @@ Future<void> setupLocator() async {
   locator.registerLazySingleton(() => LanguageController(defaultLanguageCode: remoteConfig.defaultLanguageCode));
   locator.registerLazySingleton(() => ForgotPasswordController());
   locator.registerLazySingleton(() => LoginController());
+  locator.registerLazySingleton(() => EditProfileController());
   locator.registerLazySingleton(() => ButtonController());
   locator.registerLazySingleton(() => FavoritesController());
   locator.registerLazySingleton(() => LivestreamController());
@@ -54,6 +56,5 @@ Future<void> setupLocator() async {
     await favoriteService.init();
     return favoriteService;
   });
-
   await locator.isReady<FavoriteService>();
 }
