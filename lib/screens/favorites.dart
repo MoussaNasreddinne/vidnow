@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:test1/services/Api_service.dart';
@@ -21,7 +20,7 @@ class Favorites extends StatelessWidget {
         backgroundColor: Colors.transparent,
         appBar: const VidNowAppBar(),
         body: Obx(() {
-          if (controller.favoriteVideos.isEmpty) {
+           if (controller.favoriteVideos.isEmpty) {
             return Center(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -34,25 +33,18 @@ class Favorites extends StatelessWidget {
             );
           }
 
-          return AnimatedList(
-            key: controller.listKey,
-            initialItemCount: controller.favoriteVideos.length,
-            itemBuilder: (context, index, animation) {
-              if (index >= controller.favoriteVideos.length) {
-                return const SizedBox.shrink();
-              }
+          return ListView.builder(
+            itemCount: controller.favoriteVideos.length,
+            itemBuilder: (context, index) {
               final video = controller.favoriteVideos[index];
-              return SizeTransition(
-                sizeFactor: animation,
-                child: VideoCard(
-                  recommendation: video,
-                  onTap: () => apiService.playVideo(video),
-                  onFavoriteToggle: (isFav) {
-                    if (isFav) {
-                      controller.removeItem(index);
-                    }
-                  },
-                ),
+              return VideoCard(
+                recommendation: video,
+                onTap: () => apiService.playVideo(video),
+                onFavoriteToggle: (isFav) {
+                  if (isFav) {
+                    controller.removeFavorite(video);
+                  }
+                },
               );
             },
           );

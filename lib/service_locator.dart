@@ -10,59 +10,50 @@ import 'package:test1/services/Api_service.dart';
 import 'package:test1/services/favorite_service.dart';
 import 'package:test1/controllers/theme_controller.dart';
 import 'package:test1/controllers/language_controller.dart';
-import 'package:test1/services/auth_service.dart'; 
-import 'package:firebase_auth/firebase_auth.dart'; 
+import 'package:test1/services/auth_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:test1/controllers/login_controller.dart';
 import 'package:test1/controllers/auth_controller.dart';
 import 'package:test1/controllers/forgot_password_controller.dart';
 import 'package:test1/services/remote_config_service.dart';
-import 'package:test1/controllers/search_controller.dart'; 
+import 'package:test1/controllers/search_controller.dart';
 
 GetIt locator = GetIt.instance;
 
 Future<void> setupLocator() async {
-  // Firebase Instances
+  //Firebase - Remote Config
   locator.registerLazySingleton(() => FirebaseAuth.instance);
   locator.registerLazySingleton(() => FirebaseFirestore.instance);
-  
-  // Services
   locator.registerSingletonAsync<RemoteConfigService>(() => RemoteConfigService.create());
   await locator.isReady<RemoteConfigService>();
   final remoteConfig = locator<RemoteConfigService>();
+
+  //Services 
   locator.registerLazySingleton(() => VideoApiService(baseUrl: remoteConfig.apiBaseUrl));
   locator.registerLazySingleton(() => AdService(interstitialAdUnitId: remoteConfig.interstitialAdUnitId));
-  locator.registerLazySingleton(() => AuthService()); 
-  
-  
-  await locator.isReady<RemoteConfigService>();
+  locator.registerLazySingleton(() => AuthService());
 
-  // initialized first since it needs shared preferences
-  locator.registerSingletonAsync<FavoriteService>(() async {
-    final favoriteService = FavoriteService();
-    await favoriteService.init(); 
-    return favoriteService;
-  });
-
-  // Wait for FavoriteService to be ready before registering controllers that depend on it
-  await locator.isReady<FavoriteService>();
-
-  // Controllers 
+  //Controllers
+  locator.registerLazySingleton(() => AuthController());
   locator.registerLazySingleton(() => AdController(bannerAdUnitId: remoteConfig.bannerAdUnitId));
   locator.registerLazySingleton(() => ThemeController(defaultIsDark: remoteConfig.defaultThemeIsDark));
   locator.registerLazySingleton(() => LanguageController(defaultLanguageCode: remoteConfig.defaultLanguageCode));
-
   locator.registerLazySingleton(() => ForgotPasswordController());
   locator.registerLazySingleton(() => LoginController());
-  //locator.registerLazySingleton(() => AdController());
   locator.registerLazySingleton(() => ButtonController());
   locator.registerLazySingleton(() => FavoritesController());
   locator.registerLazySingleton(() => LivestreamController());
   locator.registerLazySingleton(() => NavController());
   locator.registerLazySingleton(() => RecommendationController());
-  //locator.registerLazySingleton(() => ThemeController());
-  //locator.registerLazySingleton(() => LanguageController());
-  locator.registerLazySingleton(() => AuthController());
   locator.registerLazySingleton(() => SearchController());
-  
+
+  //Dependent Services
+  locator.registerSingletonAsync<FavoriteService>(() async {
+    final favoriteService = FavoriteService();
+    await favoriteService.init();
+    return favoriteService;
+  });
+
+  await locator.isReady<FavoriteService>();
 }
