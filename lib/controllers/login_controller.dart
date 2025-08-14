@@ -28,6 +28,19 @@ class LoginController extends GetxController {
     usernameController.clear(); 
   }
 
+Future<void> signInWithGoogle() async {
+    isLoading(true);
+    try {
+      final user = await _authService.signInWithGoogle();
+      if (user != null) {
+        final themeController = locator<ThemeController>();
+        await themeController.loadUserTheme(user.uid);
+      }
+    } finally {
+      isLoading(false);
+    }
+  }
+
   Future<void> login() async {
     isLoading(true);
     try {
@@ -39,7 +52,6 @@ class LoginController extends GetxController {
         final themeController = locator<ThemeController>();
         await themeController.loadUserTheme(user.uid);
 
-        Get.offAll(() => MainWrapper()); 
       }
     } finally {
       isLoading(false);

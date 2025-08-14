@@ -5,10 +5,12 @@ import 'package:test1/widgets/snackbar.dart';
 import 'package:test1/service_locator.dart';
 import 'package:test1/controllers/login_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+    final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
   User? get currentUser => _firebaseAuth.currentUser;
@@ -25,6 +27,54 @@ class AuthService {
   }
 
 
+ Future<User?> signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) return null;
+
+      final GoogleSignInAuthentication googleAuth = 
+          await googleUser.authentication;
+
+      final OAuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final UserCredential userCredential = 
+          await _firebaseAuth.signInWithCredential(credential);
+      final User? user = userCredential.user;
+
+      if (user != null) {
+        final doc = await _firestore.collection('users').doc(user.uid).get();
+        
+        if (!doc.exists) {
+          await _firestore.collection('users').doc(user.uid).set({
+            'username': user.displayName ?? 'Google User',
+            'email': user.email,
+            'createdAt': FieldValue.serverTimestamp(),
+            'isPremium': false,
+            'photoUrl': user.photoURL,
+          });
+        }
+      }
+
+      return user;
+    } on FirebaseAuthException catch (e) {
+      CustomSnackbar.showErrorCustomSnackbar(
+        title: 'Google Sign-In Error',
+        message: e.message ?? 'An unknown error occurred during Google sign-in.',
+      );
+      return null;
+    } catch (e) {
+      CustomSnackbar.showErrorCustomSnackbar(
+        title: 'Google Sign-In Error',
+        message: 'An unknown error occurred during Google sign-in.',
+      );
+      return null;
+    }
+  }
+
+
 Future<User?> signUpWithEmailAndPassword(String email, String password, String username) async {
     try {
       final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
@@ -33,7 +83,6 @@ Future<User?> signUpWithEmailAndPassword(String email, String password, String u
       );
       final user = userCredential.user;
       if (user != null) {
-        // Create a new document for the user with the uid
         await _firestore.collection('users').doc(user.uid).set({
           'username': username,
           'email': email.trim(),
@@ -87,7 +136,10 @@ Future<User?> signUpWithEmailAndPassword(String email, String password, String u
       if (locator.isRegistered<LoginController>()) {
         locator<LoginController>().clearFields();
       }
+      await _googleSignIn.signOut();
       await _firebaseAuth.signOut();
+      print('sign out success');
+      
     } on FirebaseAuthException catch (e) {
       CustomSnackbar.showErrorCustomSnackbar(
         title: 'Sign-Out Error',
@@ -96,3 +148,4 @@ Future<User?> signUpWithEmailAndPassword(String email, String password, String u
     }
   }
 }
+
