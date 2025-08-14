@@ -27,8 +27,10 @@ class AuthService {
 
   Future<void> updateUserProfile({required String uid, required String username, String? newPassword}) async {
     try {
+      // Update username in Firestore
       await _firestore.collection('users').doc(uid).update({'username': username});
 
+      // Update password in Firebase Auth if provided
       if (newPassword != null && newPassword.isNotEmpty) {
         await currentUser?.updatePassword(newPassword);
       }
@@ -48,25 +50,31 @@ class AuthService {
 
  Future<User?> signInWithGoogle() async {
     try {
+      // Trigger the Google Sign-In flow
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) return null;
 
+      // Obtain the auth details from the request
       final GoogleSignInAuthentication googleAuth = 
           await googleUser.authentication;
 
+      // Create a new credential
       final OAuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
+      // Sign in to Firebase with the Google credential
       final UserCredential userCredential = 
           await _firebaseAuth.signInWithCredential(credential);
       final User? user = userCredential.user;
 
       if (user != null) {
+        // Check if user exists in Firestore
         final doc = await _firestore.collection('users').doc(user.uid).get();
 
         if (!doc.exists) {
+          // Create a new user document if it doesn't exist
           await _firestore.collection('users').doc(user.uid).set({
             'username': user.displayName ?? 'Google User',
             'email': user.email,
@@ -102,6 +110,7 @@ Future<User?> signUpWithEmailAndPassword(String email, String password, String u
       );
       final user = userCredential.user;
       if (user != null) {
+        // Create a new document for the user with the uid
         await _firestore.collection('users').doc(user.uid).set({
           'username': username,
           'email': email.trim(),

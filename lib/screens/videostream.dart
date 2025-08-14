@@ -1,163 +1,31 @@
+// lib/screens/videostream.dart
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:test1/controllers/video_stream_controller.dart';
 import 'package:test1/models/video.dart';
-import 'package:test1/widgets/snackbar.dart';
-import 'package:video_player/video_player.dart';
-import 'package:chewie/chewie.dart';
-import 'package:test1/services/ad_service.dart';
 import 'package:test1/service_locator.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:test1/services/ad_service.dart';
+import 'package:test1/widgets/player_widget.dart';
 
-class VideoPlayerScreen extends StatefulWidget {
+class VideoPlayerScreen extends StatelessWidget {
   final String videoUrl;
-  final Video video; 
-  const VideoPlayerScreen(
-      {super.key, required this.video, required this.videoUrl});
+  final Video video;
 
-  @override
-  State<VideoPlayerScreen> createState() => _VideoPlayerScreenState();
-}
-
-class _VideoPlayerScreenState extends State<VideoPlayerScreen>
-    with SingleTickerProviderStateMixin {
-  VideoPlayerController? _videoPlayerController;
-  ChewieController? _chewieController;
-  bool _isLoading = true;
-  String _statusKey = 'videoPlayerInitializing';
-  late AnimationController _fadeController;
-  late Animation<double> _fadeAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _fadeController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-    _fadeAnimation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(CurvedAnimation(parent: _fadeController, curve: Curves.easeIn));
-    _initializePlayer();
-  }
-
-  // Initializes the video player with the given URL
-  Future<void> _initializePlayer() async {
-    setState(() => _statusKey = 'videoPlayerParsingUrl');
-    debugPrint(
-      'VideoPlayerScreen: _initializePlayer called. URL: "${widget.videoUrl}"',
-    );
-    try {
-      String cleanUrl = widget.videoUrl.replaceAll('"', '').trim();
-      _videoPlayerController = VideoPlayerController.networkUrl(
-        Uri.parse(cleanUrl),
-      );
-
-      setState(() => _statusKey = 'videoPlayerLoadingVideo');
-      debugPrint(
-        'VideoPlayerScreen: Attempting to initialize VideoPlayerController...',
-      );
-      await _videoPlayerController!.initialize();
-      debugPrint(
-        'VideoPlayerScreen: VideoPlayerController.initialize() completed.',
-      );
-
-      if (_videoPlayerController!.value.hasError) {
-        final error = _videoPlayerController!.value.errorDescription;
-        debugPrint(
-          'VideoPlayerScreen: VideoPlayerController has error: $error',
-        );
-        throw Exception('Video player error: $error');
-      }
-
-      if (!_videoPlayerController!.value.isInitialized) {
-        debugPrint(
-          'VideoPlayerScreen: VideoPlayerController did not report as initialized after .initialize().',
-        );
-        throw Exception('VideoPlayerController did not initialize properly.');
-      }
-
-      setState(() => _statusKey = 'videoPlayerCreatingPlayer');
-      debugPrint(
-        'VideoPlayerScreen: VideoPlayerController is initialized (true). Creating ChewieController...',
-      );
-      // chewie controller to provide UI controls for the video player
-      _chewieController = ChewieController(
-        videoPlayerController: _videoPlayerController!,
-        autoPlay: true,
-        looping: false,
-        materialProgressColors: ChewieProgressColors(
-          playedColor: Colors.red,
-          handleColor: Colors.redAccent,
-          backgroundColor: Colors.grey,
-          bufferedColor: Colors.grey.shade700,
-        ),
-        placeholder: Container(
-          color: Colors.black,
-          child: const Center(
-            child: CircularProgressIndicator(color: Colors.white),
-          ),
-        ),
-        showControls: true,
-        errorBuilder: (context, errorMessage) {
-          debugPrint('Chewie errorBuilder caught: $errorMessage');
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.error_outline, color: Colors.white, size: 50),
-                const SizedBox(height: 10),
-                Text(
-                  'couldNotPlayVideo'.trParams({'errorMessage': errorMessage}),
-                  style: const TextStyle(color: Colors.white),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          );
-        },
-      );
-
-      debugPrint(
-        'VideoPlayerScreen: ChewieController created. Player should be ready.',
-      );
-      final video = widget.video;
-      FirebaseAnalytics.instance.logEvent(
-        name: 'video_play',
-        parameters: {
-          'video_id': video.id,
-          'video_title': video.title.length > 100
-              ? video.title.substring(0, 100)
-              : video.title,
-          'video_category': video.categoryName ?? 'none',
-          'is_premium': video.isPremium,
-        },
-      );
-
-      _fadeController.forward();
-
-      setState(() {
-        _isLoading = false;
-        _statusKey = 'videoPlayerReady';
-      });
-    } catch (e) {
-      debugPrint("VideoPlayerScreen: Error during _initializePlayer: $e");
-      setState(() {
-        _isLoading = false;
-
-        _statusKey = 'couldNotPlayVideo'.trParams({
-          'errorMessage': e.toString(),
-        });
-      });
-      CustomSnackbar.showErrorCustomSnackbar(
-        title: 'playbackError'.tr,
-        message: _statusKey,
-      );
-    }
-  }
+  const VideoPlayerScreen({
+    super.key,
+    required this.video,
+    required this.videoUrl,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final String controllerTag = videoUrl;
+    final VideoStreamController controller = Get.put(
+      VideoStreamController(video: video, videoUrl: videoUrl),
+      tag: controllerTag,
+    );
+
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -175,91 +43,93 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () {
+              Get.delete<VideoStreamController>(tag: controllerTag);
               Get.back();
-              // Shows an interstitial ad when the user navigates back.
               locator<AdService>().showInterstitialAd();
             },
           ),
-          title: const Icon(Icons.play_arrow, color: Colors.white),
+          title: Text(
+            video.title,
+            style: const TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                overflow: TextOverflow.ellipsis),
+          ),
           toolbarHeight: 40,
           backgroundColor: const Color.fromARGB(255, 145, 0, 0),
           centerTitle: true,
         ),
-        body: Center(
-          child: _isLoading
-              ? Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: Container(
+                color: Colors.black,
+                child: Obx(() => PlayerWidget(
+                      isLoading: controller.isLoading.value,
+                      chewieController: controller.chewieController,
+                      fadeController: controller.fadeController,
+                      fadeAnimation: controller.fadeAnimation,
+                      statusKey: controller.statusKey.value,
+                      videoId: controller.video.id,
+                    )),
+              ),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    RotationTransition(
-                      turns: Tween(begin: 0.0, end: 1.0).animate(
-                        CurvedAnimation(
-                          parent: _fadeController,
-                          curve: Curves.easeInOut,
-                        ),
+                    ExpansionTile(
+                      title: Text(
+                        video.title,
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleLarge
+                            ?.copyWith(fontSize: 20),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      child: const CircularProgressIndicator(color: Colors.red),
-                    ),
-                    const SizedBox(height: 10),
-                    AnimatedBuilder(
-                      animation: _fadeAnimation,
-                      builder: (context, child) {
-                        return Opacity(
-                          opacity: _fadeAnimation.value,
-                          child: Text(
-                            _statusKey.tr,
-                            style: const TextStyle(
-                              color: Colors.white70,
-                              fontSize: 14,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                )
-              : FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: _chewieController != null &&
-                          _videoPlayerController != null &&
-                          _videoPlayerController!.value.isInitialized
-                      ? Hero(
-                          tag: 'video-thumbnail-${widget.video.id}',
-                          child: Chewie(controller: _chewieController!),
-                        )
-                      : Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.warning_amber,
-                              color: Colors.orange,
-                              size: 50,
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              _statusKey.contains('Error')
-                                  ? _statusKey
-                                  : 'playbackCouldNotBeStarted'.tr,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
+                      tilePadding: const EdgeInsets.symmetric(vertical: 8.0),
+                      childrenPadding: const EdgeInsets.only(
+                          bottom: 16, left: 16, right: 16),
+                      initiallyExpanded: false,
+                      iconColor: Colors.white,
+                      collapsedIconColor: Colors.white70,
+                      children: [
+                        Text(
+                          video.description,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(fontSize: 14, height: 1.5),
                         ),
+                      ],
+                    ),
+                    const Divider(height: 32.0),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Text(
+                        'Comments',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                    ),
+                    const SizedBox(height: 16.0),
+                    const Center(
+                      child: Text(
+                        'The comments section will be implemented soon.',
+                        style: TextStyle(color: Colors.white70),
+                      ),
+                    )
+                  ],
                 ),
+              ),
+            ),
+          ],
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    debugPrint('VideoPlayerScreen: Disposing controllers.');
-    _fadeController.dispose();
-    _videoPlayerController?.dispose();
-    _chewieController?.dispose();
-    super.dispose();
   }
 }
