@@ -6,6 +6,7 @@ import 'package:test1/service_locator.dart';
 import 'package:test1/services/auth_service.dart';
 import 'package:test1/widgets/profile_option.dart';
 import 'package:test1/widgets/snackbar.dart';
+import 'package:test1/screens/watch_history_screen.dart';
 
 class ProfileContent extends StatelessWidget {
   final ThemeData theme;
@@ -109,7 +110,9 @@ class ProfileContent extends StatelessWidget {
               ProfileOption(
                 icon: Icons.history_outlined,
                 title: 'watchHistory'.tr,
-                onTap: () {},
+                onTap: () {
+                  Get.to(() => const WatchHistoryScreen());
+                },
               ),
               ProfileOption(
                 icon: Icons.notifications_outlined,

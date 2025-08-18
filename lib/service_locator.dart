@@ -19,6 +19,8 @@ import 'package:test1/controllers/auth_controller.dart';
 import 'package:test1/controllers/forgot_password_controller.dart';
 import 'package:test1/services/remote_config_service.dart';
 import 'package:test1/controllers/search_controller.dart';
+import 'package:test1/controllers/watch_history_controller.dart';
+import 'package:test1/services/watch_history_service.dart';
 
 GetIt locator = GetIt.instance;
 
@@ -34,6 +36,7 @@ Future<void> setupLocator() async {
   locator.registerLazySingleton(() => VideoApiService(baseUrl: remoteConfig.apiBaseUrl));
   locator.registerLazySingleton(() => AdService(interstitialAdUnitId: remoteConfig.interstitialAdUnitId));
   locator.registerLazySingleton(() => AuthService());
+  locator.registerLazySingleton(() => WatchHistoryService()); 
 
   //Controllers
   locator.registerLazySingleton(() => AuthController());
@@ -45,6 +48,7 @@ Future<void> setupLocator() async {
   locator.registerLazySingleton(() => EditProfileController());
   locator.registerLazySingleton(() => ButtonController());
   locator.registerLazySingleton(() => FavoritesController());
+  locator.registerLazySingleton(() => WatchHistoryController());
   locator.registerLazySingleton(() => LivestreamController());
   locator.registerLazySingleton(() => NavController());
   locator.registerLazySingleton(() => RecommendationController());

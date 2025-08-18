@@ -7,6 +7,8 @@ import 'package:get/get.dart';
 import 'package:test1/models/video.dart';
 import 'package:test1/widgets/snackbar.dart';
 import 'package:video_player/video_player.dart';
+import 'package:test1/services/watch_history_service.dart';
+import 'package:test1/service_locator.dart';
 
 class VideoStreamController extends GetxController with GetSingleTickerProviderStateMixin {
   final Video video;
@@ -87,6 +89,8 @@ class VideoStreamController extends GetxController with GetSingleTickerProviderS
       );
 
       chewieController!.addListener(_onFullscreenToggle);
+      final watchHistoryService = locator<WatchHistoryService>();
+      await watchHistoryService.addVideoToHistory(video);
 
       FirebaseAnalytics.instance.logEvent(
         name: 'video_play',

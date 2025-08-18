@@ -50,6 +50,8 @@ class AppTranslations extends Translations {
       'premiumRequired': 'You must be a premium user to watch this content.',
       'editProfileError': 'Cannot Edit Profile',
       'googleUserCannotEditProfile': 'Profiles created using Google Sign-In cannot be edited here.',
+      'noWatchHistory': "You haven't watched any videos yet.",
+      'helpAndSupport': 'Help & Support',
 
     },
     // ARABIC Translations
@@ -98,6 +100,8 @@ class AppTranslations extends Translations {
       'premiumRequired': 'يجب أن تكون مستخدمًا متميزًا لمشاهدة هذا المحتوى.',
       'editProfileError': 'لا يمكن تعديل الملف الشخصي',
       'googleUserCannotEditProfile': 'لا يمكن تعديل الملفات الشخصية التي تم إنشاؤها باستخدام تسجيل الدخول بحساب جوجل هنا.',
+      'noWatchHistory': 'لم تشاهد أي فيديوهات بعد.',
+      'helpAndSupport': 'المساعدة والدعم',
 
     },
     // FRENCH Translations
@@ -148,6 +152,8 @@ class AppTranslations extends Translations {
       'Vous devez être un utilisateur premium pour voir ce contenu.',
       'editProfileError': 'Impossible de modifier le profil',
       'googleUserCannotEditProfile': 'Les profils créés avec Google Sign-In ne peuvent pas être modifiés ici.',
+      'noWatchHistory': "Vous n'avez encore regardé aucune vidéo.",
+      'helpAndSupport': 'Aide et support',
 
     },
   };
