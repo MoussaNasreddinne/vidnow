@@ -1,4 +1,3 @@
-// lib/controllers/video_stream_controller.dart
 
 import 'package:chewie/chewie.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';

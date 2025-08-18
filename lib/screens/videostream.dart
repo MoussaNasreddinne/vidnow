@@ -1,5 +1,3 @@
-// lib/screens/videostream.dart
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:test1/controllers/video_stream_controller.dart';

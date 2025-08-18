@@ -1,5 +1,3 @@
-// lib/controllers/rec_controller.dart
-
 import 'package:get/get.dart';
 import 'package:test1/models/category.dart';
 import 'package:test1/services/Api_service.dart';
