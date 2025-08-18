@@ -82,6 +82,15 @@ class AuthService {
             'isPremium': false,
             'photoUrl': user.photoURL,
           });
+          await _firestore
+              .collection('users')
+              .doc(user.uid)
+              .collection('preferences')
+              .doc('settings')
+              .set({
+            'is_dark_mode': true,
+            'language_code': 'en',
+          });
         }
       }
 
@@ -116,6 +125,15 @@ Future<User?> signUpWithEmailAndPassword(String email, String password, String u
           'email': email.trim(),
           'createdAt': FieldValue.serverTimestamp(),
           'isPremium': false,
+        });
+        await _firestore
+            .collection('users')
+            .doc(user.uid)
+            .collection('preferences')
+            .doc('settings')
+            .set({
+          'is_dark_mode': true,
+          'language_code': 'en',
         });
       }
       return user;

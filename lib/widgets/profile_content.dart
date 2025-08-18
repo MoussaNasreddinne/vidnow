@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:test1/controllers/auth_controller.dart';
 import 'package:test1/screens/edit_profile_screen.dart';
 import 'package:test1/service_locator.dart';
 import 'package:test1/services/auth_service.dart';
 import 'package:test1/widgets/profile_option.dart';
+import 'package:test1/widgets/snackbar.dart';
 
 class ProfileContent extends StatelessWidget {
   final ThemeData theme;
@@ -23,6 +25,8 @@ class ProfileContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authController = locator<AuthController>(); 
+
     return Column(
       children: [
         Padding(
@@ -52,7 +56,8 @@ class ProfileContent extends StatelessWidget {
                   height: 150,
                   width: 150,
                   errorBuilder: (context, error, stackTrace) {
-                    return const Icon(Icons.person, size: 150, color: Colors.white);
+                    return const Icon(Icons.person,
+                        size: 150, color: Colors.white);
                   },
                 ),
               ),
@@ -83,7 +88,17 @@ class ProfileContent extends StatelessWidget {
                 icon: Icons.person_outline,
                 title: 'editProfile'.tr,
                 onTap: () {
-                  Get.to(() => const EditProfileScreen());
+                  final user = authController.user.value;
+                  if (user != null &&
+                      user.providerData
+                          .any((info) => info.providerId == 'google.com')) {
+                    CustomSnackbar.showErrorCustomSnackbar(
+                      title: 'editProfileError'.tr,
+                      message: 'googleUserCannotEditProfile'.tr,
+                    );
+                  } else {
+                    Get.to(() => const EditProfileScreen());
+                  }
                 },
               ),
               ProfileOption(

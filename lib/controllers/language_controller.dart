@@ -1,9 +1,12 @@
+// controllers/language_controller.dart
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:test1/controllers/auth_controller.dart';
+import 'package:test1/service_locator.dart';
 
 class LanguageController extends GetxController {
-  final _languageKey = 'appLanguage';
   late final Rx<Locale> currentLocale;
   final String _defaultLanguageCode;
 
@@ -12,31 +15,51 @@ class LanguageController extends GetxController {
     currentLocale = Locale(_defaultLanguageCode).obs;
   }
 
-  @override
-  void onInit() {
-    super.onInit();
-    _loadLanguageFromPrefs();
-  }
-
-  //loads the saved langauge from shared preferences on startup
-  Future<void> _loadLanguageFromPrefs() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? languageCode = prefs.getString(_languageKey);
-    if (languageCode != null) {
-      currentLocale.value = Locale(languageCode);
+  // Loads the user's language from Firestore.
+  Future<void> loadUserLanguage(String userId) async {
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('preferences')
+          .doc('settings')
+          .get();
+      if (doc.exists && doc.data()!.containsKey('language_code')) {
+        final languageCode = doc.data()!['language_code'];
+        currentLocale.value = Locale(languageCode);
+        Get.updateLocale(currentLocale.value);
+      } else {
+        resetToDefaultLanguage();
+      }
+    } catch (e) {
+      debugPrint("Error loading user language: $e");
+      resetToDefaultLanguage();
     }
   }
 
-  // Saves the selected language to SharedPreferences.
-  Future<void> _saveLanguageToPrefs(String languageCode) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_languageKey, languageCode);
+  // Saves the selected language to Firestore.
+  Future<void> _saveLanguageToFirestore(String userId, String languageCode) async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('preferences')
+        .doc('settings')
+        .set({'language_code': languageCode}, SetOptions(merge: true));
   }
 
   void changeLanguage(Locale locale) {
     Get.updateLocale(locale);
     currentLocale.value = locale;
-    _saveLanguageToPrefs(locale.languageCode);
+    final authController = locator<AuthController>();
+    final userId = authController.user.value?.uid;
+    if (userId != null) {
+      _saveLanguageToFirestore(userId, locale.languageCode);
+    }
+  }
+  
+  void resetToDefaultLanguage() {
+    currentLocale.value = Locale(_defaultLanguageCode);
+    Get.updateLocale(currentLocale.value);
   }
 
   bool isArabic() {

@@ -48,6 +48,9 @@ class AppTranslations extends Translations {
       'signUp': 'Sign Up',
       'premiumContent': 'Premium Content',
       'premiumRequired': 'You must be a premium user to watch this content.',
+      'editProfileError': 'Cannot Edit Profile',
+      'googleUserCannotEditProfile': 'Profiles created using Google Sign-In cannot be edited here.',
+
     },
     // ARABIC Translations
     'ar': {
@@ -93,6 +96,9 @@ class AppTranslations extends Translations {
       'signUp': 'اشتراك',
       'premiumContent': 'محتوى بريميوم',
       'premiumRequired': 'يجب أن تكون مستخدمًا متميزًا لمشاهدة هذا المحتوى.',
+      'editProfileError': 'لا يمكن تعديل الملف الشخصي',
+      'googleUserCannotEditProfile': 'لا يمكن تعديل الملفات الشخصية التي تم إنشاؤها باستخدام تسجيل الدخول بحساب جوجل هنا.',
+
     },
     // FRENCH Translations
     'fr': {
@@ -122,7 +128,7 @@ class AppTranslations extends Translations {
       'playbackError': 'Erreur de lecture',
       'couldNotPlayVideo': 'Impossible de lire la vidéo : @errorMessage',
       'playbackCouldNotBeStarted':
-          'La lecture vidéo n\'a pas pu démarrer.\nVérifiez l\'URL ou le réseau.',
+      'La lecture vidéo n\'a pas pu démarrer.\nVérifiez l\'URL ou le réseau.',
       'languageEnglish': 'English',
       'languageArabic': 'العربية',
       'languageFrench': 'Français',
@@ -130,7 +136,7 @@ class AppTranslations extends Translations {
       'forgotPassword': 'Mot de passe oublié?',
       'resetPassword': 'Réinitialiser le mot de passe',
       'forgotPasswordInstruction':
-          'Entrez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.',
+      'Entrez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.',
       'sendResetLink': 'Envoyer le lien de réinitialisation',
       'dontHaveAccount': "Vous n'avez pas de compte?\nS'inscrire",
       'email': 'Adresse e-mail',
@@ -139,7 +145,10 @@ class AppTranslations extends Translations {
       'signUp': 'S\'inscrire',
       'premiumContent': 'Contenu Premium',
       'premiumRequired':
-          'Vous devez être un utilisateur premium pour voir ce contenu.',
+      'Vous devez être un utilisateur premium pour voir ce contenu.',
+      'editProfileError': 'Impossible de modifier le profil',
+      'googleUserCannotEditProfile': 'Les profils créés avec Google Sign-In ne peuvent pas être modifiés ici.',
+
     },
   };
 }
