@@ -64,7 +64,7 @@ class VideoStreamController extends GetxController with GetSingleTickerProviderS
 
       chewieController = ChewieController(
         videoPlayerController: videoPlayerController!,
-        autoPlay: true,
+        autoPlay: false,
         looping: false,
         allowFullScreen: true,
         materialProgressColors: ChewieProgressColors(

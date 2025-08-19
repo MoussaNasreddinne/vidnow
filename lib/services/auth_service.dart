@@ -28,7 +28,9 @@ class AuthService {
   Future<void> updateUserProfile(
       {required String uid, required String username, String? newPassword}) async {
     try {
+      // Update username in Firestore
       await _firestore.collection('users').doc(uid).update({'username': username});
+      // Update password in Firebase Auth if provided
       if (newPassword != null && newPassword.isNotEmpty) {
         await currentUser?.updatePassword(newPassword);
       }
@@ -48,21 +50,26 @@ class AuthService {
 
   Future<User?> signInWithGoogle() async {
     try {
+      // Trigger the Google Sign-In flow
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) return null;
+      // Obtain the auth details from the request
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-      
+      // Create a new credential
       final OAuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
+      // Sign in to Firebase with the Google credential
       final UserCredential userCredential =
           await _firebaseAuth.signInWithCredential(credential);
       final User? user = userCredential.user;
 
       if (user != null) {
+        // Check if user exists in Firestore
         final doc = await _firestore.collection('users').doc(user.uid).get();
         if (!doc.exists) {
+          // Create a new user document if it doesn't exist
           await _firestore.collection('users').doc(user.uid).set({
             'username': user.displayName ?? 'Google User',
             'email': user.email,
@@ -193,7 +200,7 @@ class AuthService {
     debugPrint('AuthService: Cleared subcollection at ${subcollectionRef.path}.');
   }
 
-  // Deletes all user data from Firestore 
+  // Deletes all user data from Firestore (user doc and subcollections).
   Future<void> _deleteUserFirestoreData(String uid) async {
     final userDocRef = _firestore.collection('users').doc(uid);
 
@@ -205,23 +212,25 @@ class AuthService {
     debugPrint('AuthService: Deleted user document and subcollections for user $uid.');
   }
 
-  // Deletes all comments made by a user.
-  Future<void> _deleteUserComments(String uid) async {
+  Future<void> _anonymizeUserComments(String uid) async {
     final commentsSnapshot =
         await _firestore.collectionGroup('comments').where('userId', isEqualTo: uid).get();
 
     if (commentsSnapshot.docs.isNotEmpty) {
       final batch = _firestore.batch();
       for (final doc in commentsSnapshot.docs) {
-        batch.delete(doc.reference);
+        batch.update(doc.reference, {
+          'username': 'Deleted User',
+          'userId': null,
+          'userPhotoUrl': null,
+        });
       }
       await batch.commit();
-      debugPrint('AuthService: Deleted ${commentsSnapshot.docs.length} comments for user $uid.');
+      debugPrint('AuthService: Anonymized ${commentsSnapshot.docs.length} comments for user $uid.');
     }
   }
 
-  // Main public method to delete a user account.
-  Future<void> deleteUserAccount() async {
+ Future<void> deleteUserAccount() async {
     final user = currentUser;
     if (user == null) {
       CustomSnackbar.showErrorCustomSnackbar(
@@ -229,19 +238,34 @@ class AuthService {
       return;
     }
 
+    final String uid = user.uid;
+
     try {
-      final uid = user.uid;
-      await _deleteUserFirestoreData(uid);
-      await _deleteUserComments(uid);
+      
       await user.delete();
 
+      
       await _googleSignIn.signOut();
+      
+      debugPrint('AuthService: Successfully deleted auth user $uid.');
+
+      try {
+        await _deleteUserFirestoreData(uid);
+      } catch (e) {
+        debugPrint('AuthService: Could not clean up Firestore doc for user $uid. Error: $e');
+      }
+
+      try {
+        await _anonymizeUserComments(uid);
+      } catch (e) {
+        debugPrint('AuthService: Could not anonymize comments for user $uid. Error: $e');
+      }
 
       CustomSnackbar.showSuccessCustomSnackbar(
         title: 'Success'.tr,
         message: 'accountDeletedSuccess'.tr,
       );
-      debugPrint('AuthService: Successfully deleted account for user $uid.');
+
     } on FirebaseAuthException catch (e) {
       debugPrint('AuthService: Error deleting account: ${e.message}');
       if (e.code == 'requires-recent-login') {
