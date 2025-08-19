@@ -8,7 +8,7 @@ import 'package:test1/models/video.dart';
 import 'package:test1/service_locator.dart';
 import 'package:test1/services/ad_service.dart';
 import 'package:test1/widgets/comment_widget.dart';
-import 'package:test1/widgets/gradient_background.dart'; // Import this
+import 'package:test1/widgets/gradient_background.dart'; 
 import 'package:test1/widgets/player_widget.dart';
 
 class VideoPlayerScreen extends StatelessWidget {
@@ -23,7 +23,7 @@ class VideoPlayerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context); // Get the theme
+    final theme = Theme.of(context);
     final String controllerTag = videoUrl;
     final VideoStreamController controller = Get.put(
       VideoStreamController(video: video, videoUrl: videoUrl),
@@ -38,27 +38,22 @@ class VideoPlayerScreen extends StatelessWidget {
       tag: controllerTag,
     );
 
-    // Replace the Container with GradientBackground
     return GradientBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          // Remove hardcoded colors to use theme styles
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              Get.delete<CommentsController>(tag: controllerTag);
-              Get.delete<VideoStreamController>(tag: controllerTag);
               Get.back();
               locator<AdService>().showInterstitialAd();
             },
           ),
           title: Text(
             video.title,
-            // Let the AppBar's theme handle the style
+            
           ),
           toolbarHeight: 40,
-          // Let the theme handle the background color
           centerTitle: true,
         ),
         body: Column(
@@ -67,7 +62,7 @@ class VideoPlayerScreen extends StatelessWidget {
             AspectRatio(
               aspectRatio: 16 / 9,
               child: Container(
-                color: Colors.black, // Video background should remain black
+                color: Colors.black, 
                 child: Obx(() => PlayerWidget(
                       isLoading: controller.isLoading.value,
                       chewieController: controller.chewieController,

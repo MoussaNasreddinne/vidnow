@@ -60,6 +60,12 @@ class AppTranslations extends Translations {
       'cancel': 'Cancel',
       'deleteCommentConfirmationTitle': 'Delete Comment?',
       'deleteCommentConfirmationMessage': 'Are you sure you want to permanently delete this comment?',
+      'deleteAccount': 'Delete Account',
+      'deleteAccountConfirmationTitle': 'Permanently Delete Account?',
+      'deleteAccountConfirmationMessage': 'Your account and all associated data (comments, favorites, history) will be permanently deleted. This action cannot be undone. Are you sure you want to continue?',
+      'reauthenticationRequired': 'For your security, please log out and sign in again before deleting your account.',
+      'accountDeletedSuccess': 'Your account has been successfully deleted.',
+
 
     },
     // ARABIC Translations
@@ -118,6 +124,11 @@ class AppTranslations extends Translations {
       'cancel': 'إلغاء',
       'deleteCommentConfirmationTitle': 'حذف التعليق؟',
       'deleteCommentConfirmationMessage': 'هل أنت متأكد أنك تريد حذف هذا التعليق نهائيًا؟',
+      'deleteAccount': 'حذف الحساب',
+      'deleteAccountConfirmationTitle': 'حذف الحساب نهائياً؟',
+      'deleteAccountConfirmationMessage': 'سيتم حذف حسابك وجميع البيانات المرتبطة به (التعليقات، المفضلة، السجل) بشكل دائم. لا يمكن التراجع عن هذا الإجراء. هل أنت متأكد أنك تريد المتابعة؟',
+      'reauthenticationRequired': 'لأمانك، يرجى تسجيل الخروج ثم تسجيل الدخول مرة أخرى قبل حذف حسابك.',
+      'accountDeletedSuccess': 'تم حذف حسابك بنجاح.',
       
 
     },
@@ -179,6 +190,11 @@ class AppTranslations extends Translations {
       'cancel': 'Annuler',
       'deleteCommentConfirmationTitle': 'Supprimer le commentaire?',
       'deleteCommentConfirmationMessage': 'Voulez-vous vraiment supprimer définitivement ce commentaire?',
+      'deleteAccount': 'Supprimer le compte',
+      'deleteAccountConfirmationTitle': 'Supprimer le compte définitivement?',
+      'deleteAccountConfirmationMessage': 'Votre compte et toutes les données associées (commentaires, favoris, historique) seront définitivement supprimés. Cette action est irréversible. Êtes-vous sûr de vouloir continuer ?',
+      'reauthenticationRequired': 'Pour votre sécurité, veuillez vous déconnecter et vous reconnecter avant de supprimer votre compte.',
+      'accountDeletedSuccess': 'Votre compte a été supprimé avec succès.',
 
     },
   };

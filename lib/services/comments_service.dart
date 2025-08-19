@@ -112,7 +112,6 @@ class CommentsService {
         .collection('comments')
         .doc(commentId);
 
-    // Use a transaction to ensure atomic read/write
     return _firestore.runTransaction((transaction) async {
       final snapshot = await transaction.get(commentRef);
       if (!snapshot.exists) {

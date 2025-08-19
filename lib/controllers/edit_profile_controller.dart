@@ -55,9 +55,8 @@ class EditProfileController extends GetxController {
             ? newPasswordController.text
             : null,
       );
-      Get.back(); // Go back to the profile page
+      Get.back();
     } catch (e) {
-      // Error is handled in the auth service
     } finally {
       isLoading(false);
     }

@@ -10,7 +10,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-    final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
   User? get currentUser => _firebaseAuth.currentUser;
@@ -25,12 +25,10 @@ class AuthService {
     }
   }
 
-  Future<void> updateUserProfile({required String uid, required String username, String? newPassword}) async {
+  Future<void> updateUserProfile(
+      {required String uid, required String username, String? newPassword}) async {
     try {
-      // Update username in Firestore
       await _firestore.collection('users').doc(uid).update({'username': username});
-
-      // Update password in Firebase Auth if provided
       if (newPassword != null && newPassword.isNotEmpty) {
         await currentUser?.updatePassword(newPassword);
       }
@@ -48,33 +46,23 @@ class AuthService {
     }
   }
 
- Future<User?> signInWithGoogle() async {
+  Future<User?> signInWithGoogle() async {
     try {
-      // Trigger the Google Sign-In flow
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) return null;
-
-      // Obtain the auth details from the request
-      final GoogleSignInAuthentication googleAuth = 
-          await googleUser.authentication;
-
-      // Create a new credential
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      
       final OAuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-
-      // Sign in to Firebase with the Google credential
-      final UserCredential userCredential = 
+      final UserCredential userCredential =
           await _firebaseAuth.signInWithCredential(credential);
       final User? user = userCredential.user;
 
       if (user != null) {
-        // Check if user exists in Firestore
         final doc = await _firestore.collection('users').doc(user.uid).get();
-
         if (!doc.exists) {
-          // Create a new user document if it doesn't exist
           await _firestore.collection('users').doc(user.uid).set({
             'username': user.displayName ?? 'Google User',
             'email': user.email,
@@ -110,8 +98,8 @@ class AuthService {
     }
   }
 
-
-Future<User?> signUpWithEmailAndPassword(String email, String password, String username) async {
+  Future<User?> signUpWithEmailAndPassword(
+      String email, String password, String username) async {
     try {
       final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email.trim(),
@@ -189,6 +177,89 @@ Future<User?> signUpWithEmailAndPassword(String email, String password, String u
       CustomSnackbar.showErrorCustomSnackbar(
         title: 'Sign-Out Error',
         message: e.message ?? 'An unknown error occurred during sign-out.',
+      );
+    }
+  }
+
+  // Helper to delete all documents in a given subcollection.
+  Future<void> _deleteSubcollection(CollectionReference subcollectionRef) async {
+    final snapshot = await subcollectionRef.get();
+    if (snapshot.docs.isEmpty) return;
+    final batch = _firestore.batch();
+    for (final doc in snapshot.docs) {
+      batch.delete(doc.reference);
+    }
+    await batch.commit();
+    debugPrint('AuthService: Cleared subcollection at ${subcollectionRef.path}.');
+  }
+
+  // Deletes all user data from Firestore 
+  Future<void> _deleteUserFirestoreData(String uid) async {
+    final userDocRef = _firestore.collection('users').doc(uid);
+
+    await _deleteSubcollection(userDocRef.collection('favorites'));
+    await _deleteSubcollection(userDocRef.collection('watch_history'));
+    await _deleteSubcollection(userDocRef.collection('preferences'));
+
+    await userDocRef.delete();
+    debugPrint('AuthService: Deleted user document and subcollections for user $uid.');
+  }
+
+  // Deletes all comments made by a user.
+  Future<void> _deleteUserComments(String uid) async {
+    final commentsSnapshot =
+        await _firestore.collectionGroup('comments').where('userId', isEqualTo: uid).get();
+
+    if (commentsSnapshot.docs.isNotEmpty) {
+      final batch = _firestore.batch();
+      for (final doc in commentsSnapshot.docs) {
+        batch.delete(doc.reference);
+      }
+      await batch.commit();
+      debugPrint('AuthService: Deleted ${commentsSnapshot.docs.length} comments for user $uid.');
+    }
+  }
+
+  // Main public method to delete a user account.
+  Future<void> deleteUserAccount() async {
+    final user = currentUser;
+    if (user == null) {
+      CustomSnackbar.showErrorCustomSnackbar(
+          title: 'Error', message: 'No user is currently signed in.');
+      return;
+    }
+
+    try {
+      final uid = user.uid;
+      await _deleteUserFirestoreData(uid);
+      await _deleteUserComments(uid);
+      await user.delete();
+
+      await _googleSignIn.signOut();
+
+      CustomSnackbar.showSuccessCustomSnackbar(
+        title: 'Success'.tr,
+        message: 'accountDeletedSuccess'.tr,
+      );
+      debugPrint('AuthService: Successfully deleted account for user $uid.');
+    } on FirebaseAuthException catch (e) {
+      debugPrint('AuthService: Error deleting account: ${e.message}');
+      if (e.code == 'requires-recent-login') {
+        CustomSnackbar.showErrorCustomSnackbar(
+          title: 'Security Check',
+          message: 'reauthenticationRequired'.tr,
+        );
+      } else {
+        CustomSnackbar.showErrorCustomSnackbar(
+          title: 'Error',
+          message: e.message ?? 'Could not delete account.',
+        );
+      }
+    } catch (e) {
+      debugPrint('AuthService: An unexpected error occurred during account deletion: $e');
+      CustomSnackbar.showErrorCustomSnackbar(
+        title: 'Error',
+        message: 'An unexpected error occurred. Please try again.',
       );
     }
   }

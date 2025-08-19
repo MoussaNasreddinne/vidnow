@@ -119,7 +119,6 @@ class CommentsController extends GetxController {
     }
   }
 
-  // New method to handle deleting a comment
   Future<void> deleteComment(String commentId) async {
     try {
       await _commentsService.deleteComment(

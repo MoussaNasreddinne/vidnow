@@ -27,8 +27,7 @@ class ProfileContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authController = locator<AuthController>(); 
-
+    final authController = locator<AuthController>();
     return Column(
       children: [
         Padding(
@@ -116,7 +115,7 @@ class ProfileContent extends StatelessWidget {
                 },
               ),
               ProfileOption(
-                icon: Icons.notifications_outlined,
+                icon: Icons.comment_outlined,
                 title: 'commentHistory'.tr,
                 onTap: () {
                   Get.to(() => const CommentHistoryScreen());
@@ -126,6 +125,35 @@ class ProfileContent extends StatelessWidget {
                 icon: Icons.help_outline,
                 title: 'helpAndSupport'.tr,
                 onTap: () {},
+              ),
+              ProfileOption(
+                icon: Icons.delete_forever,
+                title: 'deleteAccount'.tr,
+                isDestructive: true,
+                onTap: () {
+                  Get.dialog(
+                    AlertDialog(
+                      title: Text('deleteAccountConfirmationTitle'.tr),
+                      content: Text('deleteAccountConfirmationMessage'.tr),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Get.back(),
+                          child: Text('cancel'.tr),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Get.back(); 
+                            locator<AuthService>().deleteUserAccount();
+                          },
+                          child: Text(
+                            'delete'.tr,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
               ProfileOption(
                 icon: Icons.logout,
