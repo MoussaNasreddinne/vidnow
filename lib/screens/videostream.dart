@@ -1,9 +1,14 @@
+// lib/screens/videostream.dart
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:test1/controllers/comments_controller.dart';
 import 'package:test1/controllers/video_stream_controller.dart';
 import 'package:test1/models/video.dart';
 import 'package:test1/service_locator.dart';
 import 'package:test1/services/ad_service.dart';
+import 'package:test1/widgets/comment_widget.dart';
+import 'package:test1/widgets/gradient_background.dart'; // Import this
 import 'package:test1/widgets/player_widget.dart';
 
 class VideoPlayerScreen extends StatelessWidget {
@@ -18,29 +23,31 @@ class VideoPlayerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context); // Get the theme
     final String controllerTag = videoUrl;
     final VideoStreamController controller = Get.put(
       VideoStreamController(video: video, videoUrl: videoUrl),
       tag: controllerTag,
     );
-
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color.fromARGB(255, 0, 0, 0),
-            Color.fromARGB(255, 16, 0, 61),
-          ],
-        ),
+    final CommentsController commentsController = Get.put(
+      CommentsController(
+        videoId: video.id,
+        videoTitle: video.title,
+        thumbnailUrl: video.thumbnailUrl,
       ),
+      tag: controllerTag,
+    );
+
+    // Replace the Container with GradientBackground
+    return GradientBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
+          // Remove hardcoded colors to use theme styles
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            icon: const Icon(Icons.arrow_back),
             onPressed: () {
+              Get.delete<CommentsController>(tag: controllerTag);
               Get.delete<VideoStreamController>(tag: controllerTag);
               Get.back();
               locator<AdService>().showInterstitialAd();
@@ -48,13 +55,10 @@ class VideoPlayerScreen extends StatelessWidget {
           ),
           title: Text(
             video.title,
-            style: const TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                overflow: TextOverflow.ellipsis),
+            // Let the AppBar's theme handle the style
           ),
           toolbarHeight: 40,
-          backgroundColor: const Color.fromARGB(255, 145, 0, 0),
+          // Let the theme handle the background color
           centerTitle: true,
         ),
         body: Column(
@@ -63,7 +67,7 @@ class VideoPlayerScreen extends StatelessWidget {
             AspectRatio(
               aspectRatio: 16 / 9,
               child: Container(
-                color: Colors.black,
+                color: Colors.black, // Video background should remain black
                 child: Obx(() => PlayerWidget(
                       isLoading: controller.isLoading.value,
                       chewieController: controller.chewieController,
@@ -83,10 +87,7 @@ class VideoPlayerScreen extends StatelessWidget {
                     ExpansionTile(
                       title: Text(
                         video.title,
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleLarge
-                            ?.copyWith(fontSize: 20),
+                        style: theme.textTheme.titleLarge?.copyWith(fontSize: 20),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -94,14 +95,11 @@ class VideoPlayerScreen extends StatelessWidget {
                       childrenPadding: const EdgeInsets.only(
                           bottom: 16, left: 16, right: 16),
                       initiallyExpanded: false,
-                      iconColor: Colors.white,
-                      collapsedIconColor: Colors.white70,
+                      // Remove hardcoded icon colors to use theme defaults
                       children: [
                         Text(
                           video.description,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
+                          style: theme.textTheme.bodyMedium
                               ?.copyWith(fontSize: 14, height: 1.5),
                         ),
                       ],
@@ -111,16 +109,57 @@ class VideoPlayerScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: Text(
                         'Comments',
-                        style: Theme.of(context).textTheme.titleMedium,
+                        style: theme.textTheme.titleMedium,
                       ),
                     ),
+                    // ... The rest of the comments section UI remains the same
+                    Obx(() {
+                      final replyingTo =
+                          commentsController.replyingToUsername.value;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (replyingTo.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 4.0),
+                              child: Row(
+                                children: [
+                                  Text("Replying to $replyingTo"),
+                                  IconButton(
+                                    icon: const Icon(Icons.close, size: 16),
+                                    onPressed: commentsController.cancelReplying,
+                                  )
+                                ],
+                              ),
+                            ),
+                          TextField(
+                            controller: commentsController.textController,
+                            decoration: InputDecoration(
+                              labelText: 'Add a comment...',
+                              suffixIcon: IconButton(
+                                icon: Icon(Icons.send,
+                                    color: theme.primaryColor),
+                                onPressed: commentsController.postComment,
+                              ),
+                            ),
+                            minLines: 1,
+                            maxLines: 4,
+                          ),
+                        ],
+                      );
+                    }),
                     const SizedBox(height: 16.0),
-                    const Center(
-                      child: Text(
-                        'The comments section will be implemented soon.',
-                        style: TextStyle(color: Colors.white70),
-                      ),
-                    )
+                    Obx(() => ListView(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          children: commentsController.nestedComments
+                              .map((comment) => CommentWidget(
+                                    comment: comment,
+                                    controller: commentsController,
+                                    replies: commentsController.replies,
+                                  ))
+                              .toList(),
+                        )),
                   ],
                 ),
               ),

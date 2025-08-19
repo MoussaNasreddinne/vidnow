@@ -10,13 +10,13 @@ class AppTranslations extends Translations {
       'error': 'Error',
       'all': 'All',
       'noFavoritesAdded':
-          'No favorites added yet.\nClick the heart icon on a video to add it!',
+      'No favorites added yet.\nClick the heart icon on a video to add it!',
       'failedToGetVideoStream': 'Failed to get video stream: @error',
       'noVideosFound': 'No videos found for this category.',
       'liveChannels': 'Live Channels',
       'noLiveChannels': 'No live channels available.',
       'liveStreamNotAvailable':
-          'Live stream URL not available for this channel.',
+      'Live stream URL not available for this channel.',
       'favorites': 'Favorites',
       'addedToFavorites': 'Added "@videoTitle" to favorites!',
       'removedFromFavorites': 'Removed "@videoTitle" from favorites!',
@@ -31,7 +31,7 @@ class AppTranslations extends Translations {
       'playbackError': 'Playback Error',
       'couldNotPlayVideo': 'Could not play video: @errorMessage',
       'playbackCouldNotBeStarted':
-          'Video playback could not be started.\nDouble-check the video URL or network.',
+      'Video playback could not be started.\nDouble-check the video URL or network.',
       'languageEnglish': 'English',
       'languageArabic': 'العربية',
       'languageFrench': 'Français',
@@ -39,7 +39,7 @@ class AppTranslations extends Translations {
       'forgotPassword': 'Forgot Password?',
       'resetPassword': 'Reset Password',
       'forgotPasswordInstruction':
-          'Enter your email address and we will send you a link to reset your password.',
+      'Enter your email address and we will send you a link to reset your password.',
       'sendResetLink': 'Send Reset Link',
       'dontHaveAccount': "Don't have an account? Sign Up",
       'email': 'Email',
@@ -52,6 +52,14 @@ class AppTranslations extends Translations {
       'googleUserCannotEditProfile': 'Profiles created using Google Sign-In cannot be edited here.',
       'noWatchHistory': "You haven't watched any videos yet.",
       'helpAndSupport': 'Help & Support',
+      'commentHistory': 'Comment History', 
+      'noCommentsYet': 'You have not made any comments yet.',
+      'edit': 'Edit',
+      'delete': 'Delete',
+      'save': 'Save',
+      'cancel': 'Cancel',
+      'deleteCommentConfirmationTitle': 'Delete Comment?',
+      'deleteCommentConfirmationMessage': 'Are you sure you want to permanently delete this comment?',
 
     },
     // ARABIC Translations
@@ -61,7 +69,7 @@ class AppTranslations extends Translations {
       'error': 'خطأ',
       'all': 'الكل',
       'noFavoritesAdded':
-          'لم تتم إضافة أي مفضلات بعد. انقر على أيقونة القلب على الفيديو لإضافته!',
+      'لم تتم إضافة أي مفضلات بعد. انقر على أيقونة القلب على الفيديو لإضافته!',
       'failedToGetVideoStream': 'فشل في الحصول على بث الفيديو: @error',
       'noVideosFound': 'لم يتم العثور على فيديوهات لهذه الفئة.',
       'liveChannels': 'قنوات البث المباشر',
@@ -81,7 +89,7 @@ class AppTranslations extends Translations {
       'playbackError': 'خطأ في التشغيل',
       'couldNotPlayVideo': 'تعذر تشغيل الفيديو: @errorMessage',
       'playbackCouldNotBeStarted':
-          'تعذر بدء تشغيل الفيديو.\nتحقق مرة أخرى من رابط الفيديو أو الشبكة.',
+      'تعذر بدء تشغيل الفيديو.\nتحقق مرة أخرى من رابط الفيديو أو الشبكة.',
       'languageEnglish': 'English',
       'languageArabic': 'العربية',
       'languageFrench': 'Français',
@@ -89,7 +97,7 @@ class AppTranslations extends Translations {
       'forgotPassword': 'هل نسيت كلمة المرور؟',
       'resetPassword': 'إعادة تعيين كلمة المرور',
       'forgotPasswordInstruction':
-          'أدخل عنوان بريدك الإلكتروني وسنرسل لك رابطًا لإعادة تعيين كلمة مرورك.',
+      'أدخل عنوان بريدك الإلكتروني وسنرسل لك رابطًا لإعادة تعيين كلمة مرورك.',
       'sendResetLink': 'إرسال رابط إعادة التعيين',
       'dontHaveAccount': 'ليس لديك حساب؟\nاشتراك',
       'email': 'البريد الإلكتروني',
@@ -102,6 +110,15 @@ class AppTranslations extends Translations {
       'googleUserCannotEditProfile': 'لا يمكن تعديل الملفات الشخصية التي تم إنشاؤها باستخدام تسجيل الدخول بحساب جوجل هنا.',
       'noWatchHistory': 'لم تشاهد أي فيديوهات بعد.',
       'helpAndSupport': 'المساعدة والدعم',
+      'commentHistory': 'سجل التعليقات',  
+      'noCommentsYet': 'لم تقم بأي تعليقات بعد.', 
+      'edit': 'تعديل',
+      'delete': 'حذف',
+      'save': 'حفظ',
+      'cancel': 'إلغاء',
+      'deleteCommentConfirmationTitle': 'حذف التعليق؟',
+      'deleteCommentConfirmationMessage': 'هل أنت متأكد أنك تريد حذف هذا التعليق نهائيًا؟',
+      
 
     },
     // FRENCH Translations
@@ -111,13 +128,13 @@ class AppTranslations extends Translations {
       'error': 'Erreur',
       'all': 'Tout',
       'noFavoritesAdded':
-          'Aucun favori ajouté.\nCliquez sur le cœur pour en ajouter un !',
+      'Aucun favori ajouté.\nCliquez sur le cœur pour en ajouter un !',
       'failedToGetVideoStream': 'Échec du chargement du flux vidéo : @error',
       'noVideosFound': 'Aucune vidéo trouvée pour cette catégorie.',
       'liveChannels': 'Chaînes en direct',
       'noLiveChannels': 'Aucune chaîne en direct disponible.',
       'liveStreamNotAvailable':
-          'URL du flux en direct non disponible pour cette chaîne.',
+      'URL du flux en direct non disponible pour cette chaîne.',
       'favorites': 'Favoris',
       'addedToFavorites': '"@videoTitle" a été ajouté aux favoris !',
       'removedFromFavorites': '"@videoTitle" a été retiré des favoris !',
@@ -154,6 +171,14 @@ class AppTranslations extends Translations {
       'googleUserCannotEditProfile': 'Les profils créés avec Google Sign-In ne peuvent pas être modifiés ici.',
       'noWatchHistory': "Vous n'avez encore regardé aucune vidéo.",
       'helpAndSupport': 'Aide et support',
+      'commentHistory': 'Historique des commentaires', 
+      'noCommentsYet': "Vous n'avez pas encore fait de commentaires.",
+       'edit': 'Modifier',
+      'delete': 'Supprimer',
+      'save': 'Enregistrer',
+      'cancel': 'Annuler',
+      'deleteCommentConfirmationTitle': 'Supprimer le commentaire?',
+      'deleteCommentConfirmationMessage': 'Voulez-vous vraiment supprimer définitivement ce commentaire?',
 
     },
   };

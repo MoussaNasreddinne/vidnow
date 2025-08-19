@@ -7,6 +7,7 @@ import 'package:test1/services/auth_service.dart';
 import 'package:test1/widgets/profile_option.dart';
 import 'package:test1/widgets/snackbar.dart';
 import 'package:test1/screens/watch_history_screen.dart';
+import 'package:test1/screens/comment_history_screen.dart';
 
 class ProfileContent extends StatelessWidget {
   final ThemeData theme;
@@ -116,8 +117,10 @@ class ProfileContent extends StatelessWidget {
               ),
               ProfileOption(
                 icon: Icons.notifications_outlined,
-                title: 'notifications'.tr,
-                onTap: () {},
+                title: 'commentHistory'.tr,
+                onTap: () {
+                  Get.to(() => const CommentHistoryScreen());
+                },
               ),
               ProfileOption(
                 icon: Icons.help_outline,

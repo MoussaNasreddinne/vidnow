@@ -39,6 +39,17 @@ class VideoApiService {
       throw Exception('Failed to load categories: ${response.statusCode}');
     }
   }
+  Future<Video?> fetchVideoById(String videoId) async {
+    try {
+      final allVideos = await fetchAllVideos();
+      final video = allVideos.firstWhere((v) => v.id == videoId,
+          orElse: () => Video.empty());
+      return video.id.isNotEmpty ? video : null;
+    } catch (e) {
+      print('Error fetching video by ID: $e');
+      return null;
+    }
+  }
 
   Future<List<Video>> fetchAllVideos() async {
     final categories = await fetchCategories();
